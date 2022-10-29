@@ -15,8 +15,13 @@ export class UserService {
   async getAll(query: GetAllQuery) {
     const generatedQuery = generateQuery(query);
     const [length, data] = await Promise.all([
-      this.prisma.user.count({ where: generatedQuery.where }),
-      this.prisma.user.findMany(generatedQuery),
+      this.prisma.user.count({
+        where: { ...generatedQuery.where, active: true },
+      }),
+      this.prisma.user.findMany({
+        ...generatedQuery,
+        where: { ...generatedQuery.where, active: true },
+      }),
     ]).catch(() => {
       throw new InternalServerErrorException('Query pencarian salah');
     });
@@ -25,13 +30,13 @@ export class UserService {
   }
 
   get(id: number) {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findFirst({ where: { id, active: true } });
   }
 
   async create(body: CreateUserDto) {
     // Check if username is already in use
-    const user = await this.prisma.user.findUnique({
-      where: { username: body.username },
+    const user = await this.prisma.user.findFirst({
+      where: { username: body.username, active: true },
     });
     if (user) throw new BadRequestException('Username sudah dipakai');
 
@@ -45,8 +50,8 @@ export class UserService {
 
   async update(id: number, body: UpdateUserDto) {
     // Check if user exist
-    const oldUser = await this.prisma.user.findUnique({
-      where: { id },
+    const oldUser = await this.prisma.user.findFirst({
+      where: { id, active: true },
     });
     if (!oldUser) throw new BadRequestException('User tidak ditemukan');
 
@@ -55,6 +60,7 @@ export class UserService {
       const isUsernameAlreadyInUse = await this.prisma.user.findFirst({
         where: {
           username: body.username,
+          active: true,
           NOT: {
             id,
           },
@@ -78,7 +84,9 @@ export class UserService {
 
   async delete(id: number) {
     // Check Super Admin
-    const users = await this.prisma.user.findMany({ where: { level: 99 } });
+    const users = await this.prisma.user.findMany({
+      where: { level: 99, active: true },
+    });
     const superAdmin = users.find((user) => user.id === id);
     if (users.length <= 1 && superAdmin)
       throw new BadRequestException(
@@ -87,8 +95,10 @@ export class UserService {
 
     // Check If User Exist
 
-    return this.prisma.user.delete({ where: { id } }).catch(() => {
-      throw new BadRequestException('User tidak ditemukan');
-    });
+    return this.prisma.user
+      .update({ where: { id }, data: { active: false } })
+      .catch(() => {
+        throw new BadRequestException('User tidak ditemukan');
+      });
   }
 }

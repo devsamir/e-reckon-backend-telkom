@@ -11,15 +11,164 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique()
+  id       Int     @id @default(autoincrement())
+  username String
   password String
+  active   Boolean @default(true)
 
   fullname   String?
   level      Int
   created_at DateTime @default(now())
   update_at  DateTime @updatedAt
 
+  MitraCreated Mitra[] @relation("mitraCreatedBy")
+  MitraUpdated Mitra[] @relation("mitraUpdatedBy")
+  MitraDeleted Mitra[] @relation("mitraDeletedBy")
+
+  UnitCreated Unit[] @relation("unitCreatedBy")
+  UnitUpdated Unit[] @relation("unitUpdatedBy")
+  UnitDeleted Unit[] @relation("unitDeletedBy")
+
+  ItemsCreated Items[] @relation("itemsCreatedBy")
+  ItemsUpdated Items[] @relation("itemsUpdatedBy")
+  ItemsDeleted Items[] @relation("itemsDeletedBy")
+
+  IncidentsCreated Incidents[] @relation("incidentsCreatedBy")
+  IncidentsUpdated Incidents[] @relation("incidentsUpdatedBy")
+
+  IncidentDetailsCreated IncidentDetails[] @relation("incidentDetailsCreatedBy")
+  IncidentDetailsUpdated IncidentDetails[] @relation("incidentDetailsUpdatedBy")
+}
+
+model Mitra {
+  id        Int     @id @default(autoincrement())
+  shortname String  @db.VarChar(15)
+  fullname  String  @db.VarChar(100)
+  active    Boolean @default(true)
+
+  created_at DateTime    @default(now())
+  update_at  DateTime    @updatedAt
+  delete_at  DateTime
+  createdBy  User?       @relation("mitraCreatedBy", fields: [created_by], references: [id])
   created_by Int?
+  updatedBy  User?       @relation("mitraUpdatedBy", fields: [updated_by], references: [id])
   updated_by Int?
+  deletedBy  User?       @relation("mitraDeletedBy", fields: [deleted_by], references: [id])
+  deleted_by Int?
+  Incidents  Incidents[]
+
+  @@map("mitra")
+}
+
+model Unit {
+  id        Int     @id @default(autoincrement())
+  unit_name String  @db.VarChar(30)
+  active    Boolean @default(true)
+
+  created_at DateTime @default(now())
+  update_at  DateTime @updatedAt
+  delete_at  DateTime
+  createdBy  User?    @relation("unitCreatedBy", fields: [created_by], references: [id])
+  created_by Int?
+  updatedBy  User?    @relation("unitUpdatedBy", fields: [updated_by], references: [id])
+  updated_by Int?
+  deletedBy  User?    @relation("unitDeletedBy", fields: [deleted_by], references: [id])
+  deleted_by Int?
+  Items      Items[]
+}
+
+model Items {
+  id                    Int     @id @default(autoincrement())
+  item_code             String  @db.VarChar(100)
+  material_designator   String? @db.VarChar(100)
+  service_designator    String? @db.VarChar(100)
+  unit                  Unit    @relation(fields: [unit_id], references: [id])
+  unit_id               Int
+  material_price_telkom Decimal
+  service_price_telkom  Decimal
+  material_price_mitra  Decimal
+  service_price_mitra   Decimal
+  active                Boolean @default(true)
+
+  created_at      DateTime          @default(now())
+  update_at       DateTime          @updatedAt
+  delete_at       DateTime
+  createdBy       User?             @relation("itemsCreatedBy", fields: [created_by], references: [id])
+  created_by      Int?
+  updatedBy       User?             @relation("itemsUpdatedBy", fields: [updated_by], references: [id])
+  updated_by      Int?
+  deletedBy       User?             @relation("itemsDeletedBy", fields: [deleted_by], references: [id])
+  deleted_by      Int?
+  IncidentDetails IncidentDetails[]
+
+  @@map("items")
+}
+
+model Incidents {
+  id             Int       @id @default(autoincrement())
+  incident_code  String    @db.VarChar(30)
+  incident       String    @db.VarChar(100)
+  summary        String    @db.Text
+  job_type       String    @db.VarChar(30)
+  status         Boolean   @default(false)
+  on_tier        OnTier    @default(tier_1)
+  assignedMitra  Mitra     @relation(fields: [assigned_mitra], references: [id])
+  assigned_mitra Int
+  closed_at      DateTime?
+
+  created_at      DateTime          @default(now())
+  update_at       DateTime          @updatedAt
+  createdBy       User?             @relation("incidentsCreatedBy", fields: [created_by], references: [id])
+  created_by      Int?
+  updatedBy       User?             @relation("incidentsUpdatedBy", fields: [updated_by], references: [id])
+  updated_by      Int?
+  IncidentDetails IncidentDetails[]
+
+  @@map("incidents")
+}
+
+model IncidentDetails {
+  id          Int       @id @default(autoincrement())
+  incident    Incidents @relation(fields: [incident_id], references: [id])
+  incident_id Int
+  item        Items     @relation(fields: [item_id], references: [id])
+  item_id     Int
+
+  job_detail String?   @db.Text
+  qty        Int
+  approve_wh ApproveWh @default(not_yet)
+
+  created_at DateTime @default(now())
+  update_at  DateTime @updatedAt
+  createdBy  User?    @relation("incidentDetailsCreatedBy", fields: [created_by], references: [id])
+  created_by Int?
+  updatedBy  User?    @relation("incidentDetailsUpdatedBy", fields: [updated_by], references: [id])
+  updated_by Int?
+
+  @@map("incident_details")
+}
+
+model LogIncident {
+  id        Int      @id @default(autoincrement())
+  action_on DateTime
+  action_by String
+  action    Int
+  notes     String   @db.VarChar(100)
+
+  @@map("log_incident")
+}
+
+// ENUM
+
+enum OnTier {
+  tier_1
+  tier_2
+  tier_3
+  wh
+}
+
+enum ApproveWh {
+  not_yet
+  approved
+  decline
 }
