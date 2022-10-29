@@ -1,6 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { Exclude, Type } from 'class-transformer';
-import { User } from '@prisma/client';
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Username tidak boleh kosong' })
   username: string;
