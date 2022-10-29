@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
 
   async login(body: LoginDto) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: { username: body.username },
     });
     if (!user) throw new BadRequestException('Username atau password salah');
