@@ -8,8 +8,10 @@ import {
   ParseIntPipe,
   Delete,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
+import { AdminGuard } from '../../Guards/admin.guard';
 import {
   CreateUserDto,
   UpdateUserDto,
@@ -19,6 +21,7 @@ import {
 import { UserService } from './user.service';
 
 @Controller('user')
+@UseGuards(AdminGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 

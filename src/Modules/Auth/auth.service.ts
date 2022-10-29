@@ -37,7 +37,7 @@ export class AuthService {
     return token;
   }
 
-  async validateToken(id, token) {
+  async validateToken(token) {
     const decodedToken = this.jwtService.verify(token);
     const user = await this.userService.get(decodedToken.id);
     if (!user)
