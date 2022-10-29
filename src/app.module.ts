@@ -1,6 +1,7 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './Modules/User/user.module';
 import { PrismaModule } from './Prisma/prisma.module';
 
 @Module({
@@ -10,6 +11,7 @@ import { PrismaModule } from './Prisma/prisma.module';
       isGlobal: true,
     }),
     PrismaModule,
+    UserModule,
   ],
   controllers: [],
   providers: [
