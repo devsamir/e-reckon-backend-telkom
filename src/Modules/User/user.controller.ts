@@ -9,6 +9,7 @@ import {
   Delete,
   HttpCode,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 import { AdminGuard } from '../../Guards/admin.guard';
@@ -19,6 +20,7 @@ import {
   ExcludeUserDto,
 } from './user.dto';
 import { UserService } from './user.service';
+import { Request } from 'express';
 
 @Controller('user')
 @UseGuards(AdminGuard)
@@ -41,12 +43,19 @@ export class UserController {
     return user;
   }
 
+  @Get('/me')
+  async getMyProfile(@Req() req: Request) {
+    const user = await this.userService.get(req.user.id);
+
+    return user;
+  }
+
   @Serialize(ExcludeUserDto)
   @Get('/:id')
   async getUser(@Param('id', ParseIntPipe) id: number) {
-    const users = await this.userService.get(id);
+    const user = await this.userService.get(id);
 
-    return users;
+    return user;
   }
 
   @Serialize(ExcludeUserDto)
