@@ -1,6 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as argon from 'argon2';
-import { generateQuery, catchAsync } from '../../Common/helpers';
+import { generateQuery } from '../../Common/helpers';
 import { PrismaService } from '../../Prisma/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 
@@ -8,21 +12,23 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  getAll = catchAsync(async (query: GetAllQuery) => {
+  async getAll(query: GetAllQuery) {
     const generatedQuery = generateQuery(query);
     const [length, data] = await Promise.all([
       this.prisma.user.count({ where: generatedQuery.where }),
       this.prisma.user.findMany(generatedQuery),
-    ]);
+    ]).catch(() => {
+      throw new InternalServerErrorException('Query pencarian salah');
+    });
 
     return { length, data };
-  });
+  }
 
-  get = catchAsync(async (id: number) => {
+  get(id: number) {
     return this.prisma.user.findUnique({ where: { id } });
-  });
+  }
 
-  create = catchAsync(async (body: CreateUserDto) => {
+  async create(body: CreateUserDto) {
     // Check if username is already in use
     const user = await this.prisma.user.findUnique({
       where: { username: body.username },
@@ -30,12 +36,14 @@ export class UserService {
     if (user) throw new BadRequestException('Username sudah dipakai');
 
     // Hash password using argon and than save it
-    const hash = await argon.hash(body.password);
+    const hash = await argon.hash(body.password).catch(() => {
+      throw new InternalServerErrorException('Gagal hashing password');
+    });
 
     return this.prisma.user.create({ data: { ...body, password: hash } });
-  });
+  }
 
-  update = catchAsync(async (id: number, body: UpdateUserDto) => {
+  async update(id: number, body: UpdateUserDto) {
     // Check if user exist
     const oldUser = await this.prisma.user.findUnique({
       where: { id },
@@ -57,16 +65,18 @@ export class UserService {
     }
 
     const hash = body.password
-      ? await argon.hash(body.password)
+      ? await argon.hash(body.password).catch(() => {
+          throw new InternalServerErrorException('Gagal hashing password');
+        })
       : oldUser.password;
 
     return this.prisma.user.update({
       where: { id },
       data: { ...body, password: hash },
     });
-  });
+  }
 
-  delete = catchAsync(async (id: number) => {
+  async delete(id: number) {
     // Check Super Admin
     const users = await this.prisma.user.findMany({ where: { level: 99 } });
     const superAdmin = users.find((user) => user.id === id);
@@ -76,11 +86,9 @@ export class UserService {
       );
 
     // Check If User Exist
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new BadRequestException('User tidak ditemukan');
-    }
 
-    return this.prisma.user.delete({ where: { id } });
-  });
+    return this.prisma.user.delete({ where: { id } }).catch(() => {
+      throw new BadRequestException('User tidak ditemukan');
+    });
+  }
 }
