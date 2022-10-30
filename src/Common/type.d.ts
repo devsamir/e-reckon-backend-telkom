@@ -5,4 +5,5 @@ interface GetAllQuery {
   sort_by?: string;
   sort_direction?: 'asc' | 'desc';
   fields?: string[];
+  include?: string[];
 }

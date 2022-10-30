@@ -24,6 +24,7 @@ import { Request } from 'express';
 
 @Controller('user')
 @UseGuards(AdminGuard)
+@Serialize(ExcludeUserDto)
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -35,7 +36,6 @@ export class UserController {
     return users;
   }
 
-  @Serialize(ExcludeUserDto)
   @Post('/')
   async createUser(@Body() body: CreateUserDto) {
     const user = await this.userService.create(body);
@@ -50,7 +50,6 @@ export class UserController {
     return user;
   }
 
-  @Serialize(ExcludeUserDto)
   @Get('/:id')
   async getUser(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.get(id);
@@ -58,7 +57,6 @@ export class UserController {
     return user;
   }
 
-  @Serialize(ExcludeUserDto)
   @Patch('/:id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
