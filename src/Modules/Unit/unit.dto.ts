@@ -1,8 +1,9 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, MaxLength } from 'class-validator';
 import { ExcludeUserDto } from '../User/user.dto';
 
 export class CreateUpdateUnitDto {
+  @MaxLength(30, { message: 'Unit name tidak boleh lebih dari 30 karakter' })
   @IsNotEmpty({ message: 'Unit name tidak boleh kosong' })
   unit_name: string;
 }

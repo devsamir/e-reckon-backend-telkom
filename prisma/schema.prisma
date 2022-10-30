@@ -80,14 +80,14 @@ model Unit {
 model Items {
   id                    Int     @id @default(autoincrement())
   item_code             String  @db.VarChar(100)
-  material_designator   String? @db.VarChar(100)
-  service_designator    String? @db.VarChar(100)
+  material_designator   String  @db.VarChar(100)
+  service_designator    String  @db.VarChar(100)
   unit                  Unit    @relation(fields: [unit_id], references: [id])
   unit_id               Int
-  material_price_telkom Decimal
-  service_price_telkom  Decimal
-  material_price_mitra  Decimal
-  service_price_mitra   Decimal
+  material_price_telkom Int
+  service_price_telkom  Int
+  material_price_mitra  Int
+  service_price_mitra   Int
   active                Boolean @default(true)
 
   created_at      DateTime          @default(now())

@@ -6,5 +6,6 @@ import { UnitService } from './unit.service';
   imports: [],
   controllers: [UnitController],
   providers: [UnitService],
+  exports: [UnitService],
 })
 export class UnitModule {}
