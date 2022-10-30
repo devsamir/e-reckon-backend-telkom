@@ -48,7 +48,7 @@ model Mitra {
 
   created_at DateTime    @default(now())
   update_at  DateTime    @updatedAt
-  delete_at  DateTime
+  delete_at  DateTime?
   createdBy  User?       @relation("mitraCreatedBy", fields: [created_by], references: [id])
   created_by Int?
   updatedBy  User?       @relation("mitraUpdatedBy", fields: [updated_by], references: [id])
@@ -65,14 +65,14 @@ model Unit {
   unit_name String  @db.VarChar(30)
   active    Boolean @default(true)
 
-  created_at DateTime @default(now())
-  update_at  DateTime @updatedAt
-  delete_at  DateTime
-  createdBy  User?    @relation("unitCreatedBy", fields: [created_by], references: [id])
+  created_at DateTime  @default(now())
+  update_at  DateTime  @updatedAt
+  delete_at  DateTime?
+  createdBy  User?     @relation("unitCreatedBy", fields: [created_by], references: [id])
   created_by Int?
-  updatedBy  User?    @relation("unitUpdatedBy", fields: [updated_by], references: [id])
+  updatedBy  User?     @relation("unitUpdatedBy", fields: [updated_by], references: [id])
   updated_by Int?
-  deletedBy  User?    @relation("unitDeletedBy", fields: [deleted_by], references: [id])
+  deletedBy  User?     @relation("unitDeletedBy", fields: [deleted_by], references: [id])
   deleted_by Int?
   Items      Items[]
 }
@@ -92,7 +92,7 @@ model Items {
 
   created_at      DateTime          @default(now())
   update_at       DateTime          @updatedAt
-  delete_at       DateTime
+  delete_at       DateTime?
   createdBy       User?             @relation("itemsCreatedBy", fields: [created_by], references: [id])
   created_by      Int?
   updatedBy       User?             @relation("itemsUpdatedBy", fields: [updated_by], references: [id])
