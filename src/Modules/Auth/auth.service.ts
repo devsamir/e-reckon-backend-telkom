@@ -20,7 +20,7 @@ export class AuthService {
 
   async login(body: LoginDto) {
     const user = await this.prisma.user.findFirst({
-      where: { username: body.username },
+      where: { username: body.username, active: true },
     });
     if (!user) throw new BadRequestException('Username atau password salah');
     const checkPassword = await argon

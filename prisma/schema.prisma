@@ -47,7 +47,7 @@ model Mitra {
   active    Boolean @default(true)
 
   created_at DateTime    @default(now())
-  update_at  DateTime    @updatedAt
+  update_at  DateTime?
   delete_at  DateTime?
   createdBy  User?       @relation("mitraCreatedBy", fields: [created_by], references: [id])
   created_by Int?
@@ -66,7 +66,7 @@ model Unit {
   active    Boolean @default(true)
 
   created_at DateTime  @default(now())
-  update_at  DateTime  @updatedAt
+  update_at  DateTime?
   delete_at  DateTime?
   createdBy  User?     @relation("unitCreatedBy", fields: [created_by], references: [id])
   created_by Int?
@@ -80,18 +80,18 @@ model Unit {
 model Items {
   id                    Int     @id @default(autoincrement())
   item_code             String  @db.VarChar(100)
-  material_designator   String? @db.VarChar(100)
-  service_designator    String? @db.VarChar(100)
+  material_designator   String  @db.VarChar(100)
+  service_designator    String  @db.VarChar(100)
   unit                  Unit    @relation(fields: [unit_id], references: [id])
   unit_id               Int
-  material_price_telkom Decimal
-  service_price_telkom  Decimal
-  material_price_mitra  Decimal
-  service_price_mitra   Decimal
+  material_price_telkom Int
+  service_price_telkom  Int
+  material_price_mitra  Int
+  service_price_mitra   Int
   active                Boolean @default(true)
 
   created_at      DateTime          @default(now())
-  update_at       DateTime          @updatedAt
+  update_at       DateTime?
   delete_at       DateTime?
   createdBy       User?             @relation("itemsCreatedBy", fields: [created_by], references: [id])
   created_by      Int?
@@ -117,7 +117,7 @@ model Incidents {
   closed_at      DateTime?
 
   created_at      DateTime          @default(now())
-  update_at       DateTime          @updatedAt
+  update_at       DateTime?
   createdBy       User?             @relation("incidentsCreatedBy", fields: [created_by], references: [id])
   created_by      Int?
   updatedBy       User?             @relation("incidentsUpdatedBy", fields: [updated_by], references: [id])
@@ -138,11 +138,11 @@ model IncidentDetails {
   qty        Int
   approve_wh ApproveWh @default(not_yet)
 
-  created_at DateTime @default(now())
-  update_at  DateTime @updatedAt
-  createdBy  User?    @relation("incidentDetailsCreatedBy", fields: [created_by], references: [id])
+  created_at DateTime  @default(now())
+  update_at  DateTime?
+  createdBy  User?     @relation("incidentDetailsCreatedBy", fields: [created_by], references: [id])
   created_by Int?
-  updatedBy  User?    @relation("incidentDetailsUpdatedBy", fields: [updated_by], references: [id])
+  updatedBy  User?     @relation("incidentDetailsUpdatedBy", fields: [updated_by], references: [id])
   updated_by Int?
 
   @@map("incident_details")
