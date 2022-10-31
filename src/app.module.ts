@@ -6,6 +6,7 @@ import { AuthModule } from './Modules/Auth/auth.module';
 import { PrismaModule } from './Prisma/prisma.module';
 import { UnitModule } from './Modules/Unit/unit.module';
 import { ItemModule } from './Modules/Item/item.module';
+import { MitraModule } from './Modules/Mitra/mitra.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ItemModule } from './Modules/Item/item.module';
     AuthModule,
     UnitModule,
     ItemModule,
+    MitraModule,
   ],
   controllers: [],
   providers: [
