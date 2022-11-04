@@ -28,15 +28,16 @@ import { Request } from 'express';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @HttpCode(200)
   @Serialize(ExcludeGetAllUserDto)
-  @Get('/')
+  @Post('/search_read')
   async getAllUser(@Body() body: GetAllQuery) {
     const users = await this.userService.getAll(body);
 
     return users;
   }
 
-  @Post('/')
+  @Post('/create')
   async createUser(@Body() body: CreateUserDto) {
     const user = await this.userService.create(body);
 
@@ -50,14 +51,14 @@ export class UserController {
     return user;
   }
 
-  @Get('/:id')
+  @Get('/read/:id')
   async getUser(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.get(id);
 
     return user;
   }
 
-  @Patch('/:id')
+  @Patch('/write/:id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateUserDto,
@@ -68,7 +69,7 @@ export class UserController {
   }
 
   @HttpCode(204)
-  @Delete('/:id')
+  @Delete('/delete/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     await this.userService.delete(id);
     return null;

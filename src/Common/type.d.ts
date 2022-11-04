@@ -2,8 +2,7 @@ interface GetAllQuery {
   limit?: number;
   offset?: number;
   domain?: any;
-  sort_by?: string;
-  sort_direction?: 'asc' | 'desc';
+  sort?: string;
   fields?: string[];
   include?: string[];
 }
