@@ -22,7 +22,7 @@ export class UserService {
         ...generatedQuery,
         where: { ...generatedQuery.where, active: true },
       }),
-    ]).catch(() => {
+    ]).catch((err) => {
       throw new InternalServerErrorException('Query pencarian salah');
     });
 
