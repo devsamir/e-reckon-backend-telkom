@@ -28,23 +28,24 @@ import { MitraService } from './mitra.service';
 export class MitraController {
   constructor(private mitraService: MitraService) {}
 
-  @Get()
+  @HttpCode(200)
+  @Post('/search_read')
   @Serialize(ExcludeGetAllMitraDto)
   async getAllUnit(@Body() body: GetAllQuery) {
     return this.mitraService.getAll(body);
   }
 
-  @Post()
+  @Post('/create')
   async createItem(@Body() body: CreateMitraDto, @GetUser() user: User) {
     return this.mitraService.create(body, user);
   }
 
-  @Get('/:id')
+  @Get('/read/:id')
   async getItem(@Param('id', ParseIntPipe) id: number) {
     return this.mitraService.get(id);
   }
 
-  @Patch('/:id')
+  @Patch('/write/:id')
   async updateItem(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateMitraDto,
@@ -55,7 +56,7 @@ export class MitraController {
   }
 
   @HttpCode(204)
-  @Delete('/:id')
+  @Delete('/delete/:id')
   async deleteItem(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,

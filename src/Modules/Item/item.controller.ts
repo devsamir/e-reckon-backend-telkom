@@ -28,23 +28,24 @@ import { ItemService } from './item.service';
 export class ItemController {
   constructor(private itemService: ItemService) {}
 
-  @Get()
+  @HttpCode(200)
+  @Post('/search_read')
   @Serialize(ExcludeGetAllItemDto)
   async getAllUnit(@Body() body: GetAllQuery) {
     return this.itemService.getAll(body);
   }
 
-  @Post()
+  @Post('/create')
   async createItem(@Body() body: CreateItemDto, @GetUser() user: User) {
     return this.itemService.create(body, user);
   }
 
-  @Get('/:id')
+  @Get('/read/:id')
   async getItem(@Param('id', ParseIntPipe) id: number) {
     return this.itemService.get(id);
   }
 
-  @Patch('/:id')
+  @Patch('/write/:id')
   async updateItem(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateItemDto,
@@ -55,7 +56,7 @@ export class ItemController {
   }
 
   @HttpCode(204)
-  @Delete('/:id')
+  @Delete('/delete/:id')
   async deleteItem(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,

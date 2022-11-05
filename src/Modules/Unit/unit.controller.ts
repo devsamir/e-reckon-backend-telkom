@@ -27,26 +27,27 @@ import { UnitService } from './unit.service';
 export class UnitController {
   constructor(private unitService: UnitService) {}
 
-  @Get()
+  @HttpCode(200)
+  @Post('/search_read')
   @Serialize(ExcludeGetAllUnitDto)
   async getAllUnit(@Body() body: GetAllQuery) {
     const units = await this.unitService.getAll(body);
     return units;
   }
 
-  @Post()
+  @Post('/create')
   async createUnit(@Body() body: CreateUpdateUnitDto, @GetUser() user: User) {
     const unit = await this.unitService.create(body, user);
     return unit;
   }
 
-  @Get('/:id')
+  @Get('/read/:id')
   async getUnit(@Param('id', ParseIntPipe) id: number) {
     const unit = await this.unitService.get(id);
     return unit;
   }
 
-  @Patch('/:id')
+  @Patch('/write/:id')
   async updateUnit(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: CreateUpdateUnitDto,
@@ -57,7 +58,7 @@ export class UnitController {
   }
 
   @HttpCode(204)
-  @Delete('/:id')
+  @Delete('/delete/:id')
   async deleteUser(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
