@@ -106,7 +106,7 @@ model Items {
 
 model Incidents {
   id             Int          @id @default(autoincrement())
-  incident_code  String       @db.VarChar(30)
+  incident_code  String       @unique() @db.VarChar(30)
   incident       String       @db.VarChar(100)
   summary        String       @db.Text
   job_type       String       @db.VarChar(30)
@@ -116,8 +116,8 @@ model Incidents {
   status_tier_2  statusTier2?
   status_tier_3  statusTier3?
   status_wh      statusWh?
-  assignedMitra  Mitra        @relation(fields: [assigned_mitra], references: [id])
-  assigned_mitra Int
+  assignedMitra  Mitra?       @relation(fields: [assigned_mitra], references: [id])
+  assigned_mitra Int?
   closed_at      DateTime?
 
   created_at      DateTime          @default(now())
