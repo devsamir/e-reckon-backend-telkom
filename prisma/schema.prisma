@@ -105,15 +105,19 @@ model Items {
 }
 
 model Incidents {
-  id             Int       @id @default(autoincrement())
-  incident_code  String    @db.VarChar(30)
-  incident       String    @db.VarChar(100)
-  summary        String    @db.Text
-  job_type       String    @db.VarChar(30)
-  status         Boolean   @default(false)
-  on_tier        OnTier    @default(tier_1)
-  assignedMitra  Mitra     @relation(fields: [assigned_mitra], references: [id])
-  assigned_mitra Int
+  id             Int          @id @default(autoincrement())
+  incident_code  String       @unique() @db.VarChar(30)
+  incident       String       @db.VarChar(100)
+  summary        String       @db.Text
+  job_type       String       @db.VarChar(30)
+  status         Boolean      @default(false)
+  on_tier        OnTier       @default(tier_1)
+  status_tier_1  statusTier1  @default(open)
+  status_tier_2  statusTier2?
+  status_tier_3  statusTier3?
+  status_wh      statusWh?
+  assignedMitra  Mitra?       @relation(fields: [assigned_mitra], references: [id])
+  assigned_mitra Int?
   closed_at      DateTime?
 
   created_at      DateTime          @default(now())
@@ -165,6 +169,31 @@ enum OnTier {
   tier_2
   tier_3
   wh
+}
+
+enum statusTier1 {
+  open
+  closed
+}
+
+enum statusTier2 {
+  open
+  closed_pekerjaan
+  cek_list_by_wh
+  wh_done
+}
+
+enum statusTier3 {
+  open
+  closed_pekerjaan
+  cek_list_by_wh
+  wh_done
+}
+
+enum statusWh {
+  open
+  return
+  closed
 }
 
 enum ApproveWh {

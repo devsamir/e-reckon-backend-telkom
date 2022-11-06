@@ -1,11 +1,13 @@
 import {
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
   Inject,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
+
 import { User } from '@prisma/client';
+import { Request } from 'express';
+
 import { AuthService } from '../Modules/Auth/auth.service';
 
 declare global {

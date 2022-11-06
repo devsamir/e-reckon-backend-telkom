@@ -1,26 +1,29 @@
 import {
-  Controller,
-  Get,
   Body,
-  Post,
-  Patch,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
   Param,
   ParseIntPipe,
-  Delete,
-  HttpCode,
-  UseGuards,
+  Patch,
+  Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
-import { Serialize } from '../../Interceptors/serialize.interceptor';
+
+import { Request } from 'express';
+
 import { AdminGuard } from '../../Guards/admin.guard';
+import { Serialize } from '../../Interceptors/serialize.interceptor';
+
 import {
   CreateUserDto,
-  UpdateUserDto,
   ExcludeGetAllUserDto,
   ExcludeUserDto,
+  UpdateUserDto,
 } from './user.dto';
 import { UserService } from './user.service';
-import { Request } from 'express';
 
 @Controller('user')
 @UseGuards(AdminGuard)
