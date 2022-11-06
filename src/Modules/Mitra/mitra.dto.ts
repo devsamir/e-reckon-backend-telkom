@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, MaxLength, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
+
 import { ExcludeUserDto } from '../User/user.dto';
 
 export class CreateMitraDto {

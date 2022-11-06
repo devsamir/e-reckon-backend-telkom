@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, MaxLength, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, MaxLength } from 'class-validator';
+
 import { ExcludeUserDto } from '../User/user.dto';
 
 export class CreateItemDto {

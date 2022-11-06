@@ -3,9 +3,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+
 import * as argon from 'argon2';
+
 import { generateQuery } from '../../Common/helpers';
 import { PrismaService } from '../../Prisma/prisma.service';
+
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 @Injectable()
