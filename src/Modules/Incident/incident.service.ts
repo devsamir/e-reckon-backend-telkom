@@ -51,38 +51,14 @@ export class IncidentService {
     // Generate Incident Code
     const incidentCode = await generateIncidentCode(this.prisma);
 
-    // Get All Item ids in body an check if it exist in database
-    const itemIds = [
-      ...new Set(body.incident_details.map((item) => item.item_id)),
-    ];
-    const countItem = await this.prisma.items.count({
-      where: { id: { in: itemIds }, active: true },
-    });
-    if (itemIds.length !== countItem)
-      throw new BadRequestException('material tidak valid');
-
-    return this.prisma.$transaction(async () => {
-      const incident = await this.prisma.incidents.create({
-        data: {
-          incident: body.incident,
-          job_type: body.job_type,
-          summary: body.summary,
-          incident_code: incidentCode,
-          created_by: user.id,
-        },
-      });
-
-      const incidentDetails = await this.prisma.incidentDetails.createMany({
-        data: body.incident_details.map((detail) => ({
-          incident_id: incident.id,
-          item_id: detail.item_id,
-          qty: detail.qty,
-          job_detail: detail.job_detail,
-          approve_wh: detail.approve_wh,
-        })) as any,
-      });
-
-      return { incident, incidentDetails };
+    return this.prisma.incidents.create({
+      data: {
+        incident: body.incident,
+        job_type: body.job_type,
+        summary: body.summary,
+        incident_code: incidentCode,
+        created_by: user.id,
+      },
     });
   }
 

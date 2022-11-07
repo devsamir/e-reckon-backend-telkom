@@ -27,14 +27,6 @@ export class CreateIncidentDto {
   })
   @IsNotEmpty({ message: 'Jenis pekerjaan tidak boleh kosong' })
   job_type: string;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @ArrayMinSize(1, {
-    message: 'Tiket setidaknya harus memiliki satu material',
-  })
-  @Type(() => CreateIncidentDetails)
-  incident_details: CreateIncidentDetails[];
 }
 
 export class UpdateIncidentDto {
