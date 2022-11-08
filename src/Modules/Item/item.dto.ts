@@ -1,7 +1,4 @@
-import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsOptional, MaxLength } from 'class-validator';
-
-import { ExcludeUserDto } from '../User/user.dto';
 
 export class CreateItemDto {
   @MaxLength(100, { message: 'Item code tidak boleh lebih dari 100 karakter' })
@@ -85,19 +82,4 @@ export class UpdateItemDto {
   @IsNotEmpty({ message: 'Harga service mitra tidak boleh kosong' })
   @IsOptional()
   service_price_mitra: number;
-}
-export class ExcludeItemDto {
-  @Type(() => ExcludeUserDto)
-  createdBy: ExcludeUserDto;
-
-  @Type(() => ExcludeUserDto)
-  updatedBy: ExcludeUserDto;
-
-  @Type(() => ExcludeUserDto)
-  deletedBy: ExcludeUserDto;
-}
-
-export class ExcludeGetAllItemDto {
-  @Type(() => ExcludeItemDto)
-  data: ExcludeItemDto;
 }

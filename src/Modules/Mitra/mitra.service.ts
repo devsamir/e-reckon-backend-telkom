@@ -90,10 +90,10 @@ export class MitraService {
     });
   }
 
-  async delete(id: number, user: User) {
+  async delete(ids: number[], user: User) {
     return this.prisma.mitra
-      .update({
-        where: { id },
+      .updateMany({
+        where: { id: { in: ids } },
         data: { active: false, deleted_by: user.id, delete_at: new Date() },
       })
       .catch(() => {

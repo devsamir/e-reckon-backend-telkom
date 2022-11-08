@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Param,
@@ -14,27 +13,28 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
+import {
+  ExcludePasswordDto,
+  ExcludePasswordGetAllDto,
+} from '../../Common/dtos/excludePasswordDto';
+import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import {
-  CreateMitraDto,
-  ExcludeGetAllMitraDto,
-  ExcludeMitraDto,
-  UpdateMitraDto,
-} from './mitra.dto';
+import { CreateMitraDto, UpdateMitraDto } from './mitra.dto';
 import { MitraService } from './mitra.service';
 
 @Controller('mitra')
-@Serialize(ExcludeMitraDto)
+@Serialize(ExcludePasswordDto)
 @UseGuards(AdminGuard)
 export class MitraController {
   constructor(private mitraService: MitraService) {}
 
   @HttpCode(200)
   @Post('/search_read')
-  @Serialize(ExcludeGetAllMitraDto)
-  async getAllUnit(@Body() body: GetAllQuery) {
+  @Serialize(ExcludePasswordGetAllDto)
+  async getAllUnit(@Body() body: GetAllQueryDto) {
     return this.mitraService.getAll(body);
   }
 
@@ -59,12 +59,9 @@ export class MitraController {
   }
 
   @HttpCode(204)
-  @Delete('/delete/:id')
-  async deleteItem(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser() user: User,
-  ) {
-    await this.mitraService.delete(id, user);
+  @Post('/delete')
+  async deleteItem(@Body() body: DeleteDataDto, @GetUser() user: User) {
+    await this.mitraService.delete(body.ids, user);
     return null;
   }
 }

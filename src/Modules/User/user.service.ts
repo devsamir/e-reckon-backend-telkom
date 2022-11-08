@@ -85,13 +85,14 @@ export class UserService {
     });
   }
 
-  async delete(id: number) {
+  async delete(ids: number[]) {
     // Check Super Admin
     const users = await this.prisma.user.findMany({
       where: { level: 99, active: true },
     });
-    const superAdmin = users.find((user) => user.id === id);
-    if (users.length <= 1 && superAdmin)
+
+    const superAdmin = users.filter((user) => ids.includes(user.id));
+    if (superAdmin.length >= 1 && users.length === superAdmin.length)
       throw new BadRequestException(
         'Minimal harus ada satu super admin di sistem',
       );
@@ -99,7 +100,7 @@ export class UserService {
     // Check If User Exist
 
     return this.prisma.user
-      .update({ where: { id }, data: { active: false } })
+      .updateMany({ where: { id: { in: ids } }, data: { active: false } })
       .catch(() => {
         throw new BadRequestException('User tidak ditemukan');
       });

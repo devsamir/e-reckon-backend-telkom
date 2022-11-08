@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Param,
@@ -14,27 +13,29 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
+import {
+  ExcludePasswordDto,
+  ExcludePasswordGetAllDto,
+} from '../../Common/dtos/excludePasswordDto';
+import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import {
-  CreateIncidentDto,
-  ExcludeGetAllIncidentDto,
-  ExcludeIncidentDto,
-  UpdateIncidentDto,
-} from './incident.dto';
+import { CreateIncidentDto, UpdateIncidentDto } from './incident.dto';
 import { IncidentService } from './incident.service';
 
 @UseGuards(AdminGuard)
-@Serialize(ExcludeIncidentDto)
+@Serialize(ExcludePasswordDto)
 @Controller('incident')
 export class IncidentController {
   constructor(private incidentService: IncidentService) {}
 
   @HttpCode(200)
   @Post('/search_read')
-  @Serialize(ExcludeGetAllIncidentDto)
-  async getAllIncident(@Body() body: GetAllQuery) {
+  @Serialize(ExcludePasswordGetAllDto)
+  async getAllIncident(@Body() body: GetAllQueryDto) {
+    console.log(body);
     return this.incidentService.getAll(body);
   }
 
@@ -58,8 +59,8 @@ export class IncidentController {
   }
 
   @HttpCode(204)
-  @Delete('/delete/:id')
-  async deleteIncident(@Param('id', ParseIntPipe) id: number) {
-    return this.incidentService.delete(id);
+  @Post('/delete')
+  async deleteIncident(@Body() body: DeleteDataDto) {
+    return this.incidentService.delete(body.ids);
   }
 }
