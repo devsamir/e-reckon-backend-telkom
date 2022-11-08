@@ -67,7 +67,7 @@ export class IncidentService {
     const incident = await this.prisma.incidents.findUnique({ where: { id } });
     if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
 
-    if (body.incident_details.length) {
+    if (body?.incident_details?.length) {
       const itemIds = [
         ...new Set(body.incident_details.map((item) => item.item_id)),
       ];
@@ -89,6 +89,7 @@ export class IncidentService {
           update_at: new Date(),
         },
       });
+      if (!body?.incident_details?.length) return incident;
 
       const incidentDetails = await Promise.all(
         body.incident_details.map(async (incident) => {
