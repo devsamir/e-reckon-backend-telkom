@@ -14,25 +14,25 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import {
+  ExcludePasswordDto,
+  ExcludePasswordGetAllDto,
+} from '../../Common/dtos/excludePasswordDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import {
-  CreateUpdateUnitDto,
-  ExcludeGetAllUnitDto,
-  ExcludeUnitDto,
-} from './unit.dto';
+import { CreateUpdateUnitDto } from './unit.dto';
 import { UnitService } from './unit.service';
 
 @Controller('unit')
-@Serialize(ExcludeUnitDto)
+@Serialize(ExcludePasswordDto)
 @UseGuards(AdminGuard)
 export class UnitController {
   constructor(private unitService: UnitService) {}
 
   @HttpCode(200)
   @Post('/search_read')
-  @Serialize(ExcludeGetAllUnitDto)
+  @Serialize(ExcludePasswordGetAllDto)
   async getAllUnit(@Body() body: GetAllQuery) {
     const units = await this.unitService.getAll(body);
     return units;

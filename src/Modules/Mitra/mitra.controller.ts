@@ -14,26 +14,25 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import {
+  ExcludePasswordDto,
+  ExcludePasswordGetAllDto,
+} from '../../Common/dtos/excludePasswordDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import {
-  CreateMitraDto,
-  ExcludeGetAllMitraDto,
-  ExcludeMitraDto,
-  UpdateMitraDto,
-} from './mitra.dto';
+import { CreateMitraDto, UpdateMitraDto } from './mitra.dto';
 import { MitraService } from './mitra.service';
 
 @Controller('mitra')
-@Serialize(ExcludeMitraDto)
+@Serialize(ExcludePasswordDto)
 @UseGuards(AdminGuard)
 export class MitraController {
   constructor(private mitraService: MitraService) {}
 
   @HttpCode(200)
   @Post('/search_read')
-  @Serialize(ExcludeGetAllMitraDto)
+  @Serialize(ExcludePasswordGetAllDto)
   async getAllUnit(@Body() body: GetAllQuery) {
     return this.mitraService.getAll(body);
   }

@@ -14,26 +14,25 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import {
+  ExcludePasswordDto,
+  ExcludePasswordGetAllDto,
+} from '../../Common/dtos/excludePasswordDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import {
-  CreateItemDto,
-  ExcludeGetAllItemDto,
-  ExcludeItemDto,
-  UpdateItemDto,
-} from './item.dto';
+import { CreateItemDto, UpdateItemDto } from './item.dto';
 import { ItemService } from './item.service';
 
 @Controller('item')
-@Serialize(ExcludeItemDto)
+@Serialize(ExcludePasswordDto)
 @UseGuards(AdminGuard)
 export class ItemController {
   constructor(private itemService: ItemService) {}
 
   @HttpCode(200)
   @Post('/search_read')
-  @Serialize(ExcludeGetAllItemDto)
+  @Serialize(ExcludePasswordGetAllDto)
   async getAllUnit(@Body() body: GetAllQuery) {
     return this.itemService.getAll(body);
   }

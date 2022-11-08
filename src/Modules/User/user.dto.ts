@@ -1,4 +1,3 @@
-import { Exclude, Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Username tidak boleh kosong' })
@@ -31,14 +30,4 @@ export class UpdateUserDto {
   @IsNumber({}, { message: 'Level harus berupa angka' })
   @IsNotEmpty({ message: 'Level user tidak boleh kosong' })
   level?: number;
-}
-
-export class ExcludeUserDto {
-  @Exclude()
-  password: string;
-}
-
-export class ExcludeGetAllUserDto {
-  @Type(() => ExcludeUserDto)
-  data: ExcludeUserDto;
 }

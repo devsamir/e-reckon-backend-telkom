@@ -14,26 +14,25 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import {
+  ExcludePasswordDto,
+  ExcludePasswordGetAllDto,
+} from '../../Common/dtos/excludePasswordDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import {
-  CreateIncidentDto,
-  ExcludeGetAllIncidentDto,
-  ExcludeIncidentDto,
-  UpdateIncidentDto,
-} from './incident.dto';
+import { CreateIncidentDto, UpdateIncidentDto } from './incident.dto';
 import { IncidentService } from './incident.service';
 
 @UseGuards(AdminGuard)
-@Serialize(ExcludeIncidentDto)
+@Serialize(ExcludePasswordDto)
 @Controller('incident')
 export class IncidentController {
   constructor(private incidentService: IncidentService) {}
 
   @HttpCode(200)
   @Post('/search_read')
-  @Serialize(ExcludeGetAllIncidentDto)
+  @Serialize(ExcludePasswordGetAllDto)
   async getAllIncident(@Body() body: GetAllQuery) {
     return this.incidentService.getAll(body);
   }

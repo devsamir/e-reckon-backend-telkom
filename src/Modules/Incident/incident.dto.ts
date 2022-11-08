@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -11,8 +10,6 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-
-import { ExcludeUserDto } from '../User/user.dto';
 
 export class CreateIncidentDto {
   @MaxLength(100, { message: 'Tiket in tidak boleh lebih dari 100 karakter' })
@@ -110,20 +107,4 @@ export class UpdateIncidentDetails {
 
   @IsEnum(OrmCode, { message: 'ORM Code tidak boleh kosong' })
   orm_code: OrmCode;
-}
-
-export class ExcludeIncidentDto {
-  @Type(() => ExcludeUserDto)
-  createdBy: ExcludeUserDto;
-
-  @Type(() => ExcludeUserDto)
-  updatedBy: ExcludeUserDto;
-
-  @Type(() => ExcludeUserDto)
-  deletedBy: ExcludeUserDto;
-}
-
-export class ExcludeGetAllIncidentDto {
-  @Type(() => ExcludeIncidentDto)
-  data: ExcludeIncidentDto;
 }

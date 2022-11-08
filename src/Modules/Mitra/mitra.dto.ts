@@ -1,7 +1,4 @@
-import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
-
-import { ExcludeUserDto } from '../User/user.dto';
 
 export class CreateMitraDto {
   @MaxLength(15, { message: 'Nama pendek tidak boleh lebih dari 15 karakter' })
@@ -27,19 +24,4 @@ export class UpdateMitraDto {
   @IsNotEmpty({ message: 'Nama Panjang tidak boleh kosong' })
   @IsOptional()
   fullname: string;
-}
-export class ExcludeMitraDto {
-  @Type(() => ExcludeUserDto)
-  createdBy: ExcludeUserDto;
-
-  @Type(() => ExcludeUserDto)
-  updatedBy: ExcludeUserDto;
-
-  @Type(() => ExcludeUserDto)
-  deletedBy: ExcludeUserDto;
-}
-
-export class ExcludeGetAllMitraDto {
-  @Type(() => ExcludeMitraDto)
-  data: ExcludeMitraDto;
 }

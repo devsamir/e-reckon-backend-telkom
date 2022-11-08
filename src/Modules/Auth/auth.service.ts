@@ -41,12 +41,13 @@ export class AuthService {
   }
 
   async validateToken(token) {
-    const decodedToken = this.jwtService.verify(token);
-    const user = await this.userService.get(decodedToken.id);
-    if (!user)
+    const decodedToken = await this.jwtService.verifyAsync(token).catch(() => {
       throw new UnauthorizedException(
         'Token sudah kadaluarsa, silakan login lagi terlebih dahulu',
       );
+    });
+    const user = await this.userService.get(decodedToken.id);
+    if (!user) throw new UnauthorizedException('User tidak ditemukan');
     return user;
   }
 }

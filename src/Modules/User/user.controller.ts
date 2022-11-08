@@ -14,25 +14,24 @@ import {
 
 import { Request } from 'express';
 
+import {
+  ExcludePasswordDto,
+  ExcludePasswordGetAllDto,
+} from '../../Common/dtos/excludePasswordDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import {
-  CreateUserDto,
-  ExcludeGetAllUserDto,
-  ExcludeUserDto,
-  UpdateUserDto,
-} from './user.dto';
+import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
 @UseGuards(AdminGuard)
-@Serialize(ExcludeUserDto)
+@Serialize(ExcludePasswordDto)
 export class UserController {
   constructor(private userService: UserService) {}
 
   @HttpCode(200)
-  @Serialize(ExcludeGetAllUserDto)
+  @Serialize(ExcludePasswordGetAllDto)
   @Post('/search_read')
   async getAllUser(@Body() body: GetAllQuery) {
     const users = await this.userService.getAll(body);
