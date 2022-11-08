@@ -35,7 +35,6 @@ export class UnitController {
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
   async getAllUnit(@Body() body: GetAllQueryDto) {
-    console.log(body);
     const units = await this.unitService.getAll(body);
     return units;
   }

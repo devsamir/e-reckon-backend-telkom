@@ -9,11 +9,6 @@ export const generateIncidentCode = async (prisma: PrismaService) => {
     orderBy: { id: 'desc' },
   });
   if (lastestIncident) {
-    console.log(
-      `0000${
-        Number(lastestIncident.incident_code.replace(prefix, '')) + 1
-      }`.substring(4),
-    );
     const val = `0000${
       Number(lastestIncident.incident_code.replace(prefix, '')) + 1
     }`;
