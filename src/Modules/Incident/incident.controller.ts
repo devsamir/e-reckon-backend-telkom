@@ -35,7 +35,6 @@ export class IncidentController {
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
   async getAllIncident(@Body() body: GetAllQueryDto) {
-    console.log(body);
     return this.incidentService.getAll(body);
   }
 
