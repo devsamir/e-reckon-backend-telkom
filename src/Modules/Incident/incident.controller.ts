@@ -18,6 +18,7 @@ import {
   ExcludePasswordDto,
   ExcludePasswordGetAllDto,
 } from '../../Common/dtos/excludePasswordDto';
+import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
@@ -33,7 +34,8 @@ export class IncidentController {
   @HttpCode(200)
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
-  async getAllIncident(@Body() body: GetAllQuery) {
+  async getAllIncident(@Body() body: GetAllQueryDto) {
+    console.log(body);
     return this.incidentService.getAll(body);
   }
 

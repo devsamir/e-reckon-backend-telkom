@@ -18,6 +18,7 @@ import {
   ExcludePasswordDto,
   ExcludePasswordGetAllDto,
 } from '../../Common/dtos/excludePasswordDto';
+import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
@@ -33,7 +34,7 @@ export class MitraController {
   @HttpCode(200)
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
-  async getAllUnit(@Body() body: GetAllQuery) {
+  async getAllUnit(@Body() body: GetAllQueryDto) {
     return this.mitraService.getAll(body);
   }
 

@@ -18,6 +18,7 @@ import {
   ExcludePasswordDto,
   ExcludePasswordGetAllDto,
 } from '../../Common/dtos/excludePasswordDto';
+import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
@@ -33,7 +34,8 @@ export class UnitController {
   @HttpCode(200)
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
-  async getAllUnit(@Body() body: GetAllQuery) {
+  async getAllUnit(@Body() body: GetAllQueryDto) {
+    console.log(body);
     const units = await this.unitService.getAll(body);
     return units;
   }
