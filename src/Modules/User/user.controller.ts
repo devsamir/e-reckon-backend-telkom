@@ -14,6 +14,7 @@ import {
 
 import { Request } from 'express';
 
+import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
 import {
   ExcludePasswordDto,
   ExcludePasswordGetAllDto,
@@ -72,9 +73,9 @@ export class UserController {
   }
 
   @HttpCode(204)
-  @Delete('/delete/:id')
-  async deleteUser(@Param('id', ParseIntPipe) id: number) {
-    await this.userService.delete(id);
+  @Post('/delete')
+  async deleteUser(@Body() body: DeleteDataDto) {
+    await this.userService.delete(body.ids);
     return null;
   }
 }

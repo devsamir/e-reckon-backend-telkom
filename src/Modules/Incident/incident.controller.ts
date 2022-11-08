@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Param,
@@ -14,6 +13,7 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
 import {
   ExcludePasswordDto,
   ExcludePasswordGetAllDto,
@@ -59,8 +59,8 @@ export class IncidentController {
   }
 
   @HttpCode(204)
-  @Delete('/delete/:id')
-  async deleteIncident(@Param('id', ParseIntPipe) id: number) {
-    return this.incidentService.delete(id);
+  @Post('/delete')
+  async deleteIncident(@Body() body: DeleteDataDto) {
+    return this.incidentService.delete(body.ids);
   }
 }

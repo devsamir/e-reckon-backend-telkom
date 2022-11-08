@@ -133,14 +133,18 @@ export class IncidentService {
     });
   }
 
-  async delete(id: number) {
+  async delete(ids: number[]) {
     return this.prisma.$transaction(async () => {
       const deletedIncidentDetails =
         await this.prisma.incidentDetails.deleteMany({
-          where: { incident_id: id },
+          where: { incident_id: { in: ids } },
         });
-      const deletedIncident = await this.prisma.incidents.delete({
-        where: { id },
+      const deletedIncident = await this.prisma.incidents.deleteMany({
+        where: {
+          id: {
+            in: ids,
+          },
+        },
       });
       return { deletedIncidentDetails, deletedIncident };
     });

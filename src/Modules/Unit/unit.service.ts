@@ -82,10 +82,10 @@ export class UnitService {
     });
   }
 
-  async delete(id: number, user: User) {
+  async delete(ids: number[], user: User) {
     return this.prisma.unit
-      .update({
-        where: { id },
+      .updateMany({
+        where: { id: { in: ids } },
         data: { active: false, deleted_by: user.id, delete_at: new Date() },
       })
       .catch(() => {

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Param,
@@ -14,6 +13,7 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
 import {
   ExcludePasswordDto,
   ExcludePasswordGetAllDto,
@@ -59,12 +59,9 @@ export class MitraController {
   }
 
   @HttpCode(204)
-  @Delete('/delete/:id')
-  async deleteItem(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser() user: User,
-  ) {
-    await this.mitraService.delete(id, user);
+  @Post('/delete')
+  async deleteItem(@Body() body: DeleteDataDto, @GetUser() user: User) {
+    await this.mitraService.delete(body.ids, user);
     return null;
   }
 }
