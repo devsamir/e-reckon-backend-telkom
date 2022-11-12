@@ -22,7 +22,11 @@ import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import { CreateIncidentDto, UpdateIncidentDto } from './incident.dto';
+import {
+  ConfirmFirstTier,
+  CreateIncidentDto,
+  UpdateIncidentDto,
+} from './incident.dto';
 import { IncidentService } from './incident.service';
 
 @UseGuards(AdminGuard)
@@ -61,5 +65,10 @@ export class IncidentController {
   @Post('/delete')
   async deleteIncident(@Body() body: DeleteDataDto) {
     return this.incidentService.delete(body.ids);
+  }
+
+  @Post('/confirm-first-tier')
+  confirmFirstTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.confirmFirstTier(body, user);
   }
 }

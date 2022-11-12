@@ -43,6 +43,10 @@ export class UpdateIncidentDto {
   @IsOptional()
   job_type: string;
 
+  @IsNumber({}, { message: 'Mitra ID harus number' })
+  @IsOptional()
+  assigned_mitra: number;
+
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayMinSize(1, {
@@ -64,24 +68,6 @@ enum OrmCode {
   update = 'update',
   delete = 'delete',
 }
-export class CreateIncidentDetails {
-  @IsNumber({}, { message: 'material harus number' })
-  @IsNotEmpty({ message: 'material tidak boleh kosong' })
-  item_id: number;
-
-  @IsString({ message: 'Uraian pekerjaan harus berupa string' })
-  @IsOptional()
-  job_detail: string;
-
-  @IsNumber({}, { message: 'Jumlah material harus number' })
-  @IsNotEmpty({ message: 'Jumlah material tidak boleh kosong' })
-  qty: number;
-
-  @IsEnum(ApproveWh, { message: 'Approve WH tidak sesuai' })
-  @IsOptional()
-  approve_wh: ApproveWh;
-}
-
 export class UpdateIncidentDetails {
   @IsNumber({}, { message: 'id harus number' })
   @IsOptional()
@@ -107,4 +93,10 @@ export class UpdateIncidentDetails {
 
   @IsEnum(OrmCode, { message: 'ORM Code tidak boleh kosong' })
   orm_code: OrmCode;
+}
+
+export class ConfirmFirstTier {
+  @IsNumber({}, { message: 'Id harus number' })
+  @IsNotEmpty({ message: 'Id harus diisi' })
+  id: number;
 }

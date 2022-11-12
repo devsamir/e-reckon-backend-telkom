@@ -9,7 +9,11 @@ import { User } from '@prisma/client';
 import { generateQuery } from '../../Common/helpers';
 import { PrismaService } from '../../Prisma/prisma.service';
 
-import { CreateIncidentDto, UpdateIncidentDto } from './incident.dto';
+import {
+  ConfirmFirstTier,
+  CreateIncidentDto,
+  UpdateIncidentDto,
+} from './incident.dto';
 import { generateIncidentCode } from './incident.helper';
 
 @Injectable()
@@ -40,7 +44,11 @@ export class IncidentService {
         assignedMitra: true,
         IncidentDetails: {
           include: {
-            item: true,
+            item: {
+              include: {
+                unit: true,
+              },
+            },
           },
         },
       },
@@ -67,15 +75,23 @@ export class IncidentService {
     const incident = await this.prisma.incidents.findUnique({ where: { id } });
     if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
 
+    // Check if mitra is valid
+    if (body.assigned_mitra) {
+      const mitra = await this.prisma.mitra.findFirst({
+        where: { id: body.assigned_mitra, active: true },
+      });
+      if (!mitra) throw new BadRequestException('Mitra tidak ditemukan');
+    }
+
     if (body?.incident_details?.length) {
       const itemIds = [
         ...new Set(body.incident_details.map((item) => item.item_id)),
-      ];
+      ].filter((v) => !!v);
       const countItem = await this.prisma.items.count({
         where: { id: { in: itemIds }, active: true },
       });
       if (itemIds.length !== countItem)
-        throw new BadRequestException('material tidak valid');
+        throw new BadRequestException('Material tidak valid');
     }
 
     return this.prisma.$transaction(async () => {
@@ -85,51 +101,55 @@ export class IncidentService {
           incident: body.incident,
           job_type: body.job_type,
           summary: body.summary,
+          assigned_mitra: body?.assigned_mitra,
           updated_by: user.id,
           update_at: new Date(),
         },
       });
       if (!body?.incident_details?.length) return incident;
 
+      const newIncidentDetails = await this.prisma.incidentDetails.createMany({
+        data: body.incident_details
+          .filter((incident) => incident.orm_code === 'create')
+          .map((incident) => ({
+            incident_id: id,
+            item_id: incident.item_id,
+            qty: incident.qty,
+            job_detail: incident.job_detail,
+            approve_wh: incident.approve_wh,
+          })) as any,
+      });
+
       const incidentDetails = await Promise.all(
-        body.incident_details.map(async (incident) => {
-          if (incident.orm_code === 'create') {
-            const createdIncident = await this.prisma.incidentDetails.create({
-              data: {
-                incident_id: id,
-                item_id: incident.item_id,
-                qty: incident.qty,
-                job_detail: incident.job_detail,
-                approve_wh: incident.approve_wh,
-              },
-              select: {
-                id: true,
-              },
-            });
-            return createdIncident.id;
-          } else if (incident.orm_code === 'update') {
-            const updatedIncident = await this.prisma.incidentDetails.update({
-              where: { id: incident.id },
-              data: {
-                qty: incident.qty,
-                job_detail: incident.job_detail,
-                approve_wh: incident.approve_wh,
-              },
-              select: {
-                id: true,
-              },
-            });
-            return updatedIncident.id;
-          } else if (incident.orm_code === 'delete') {
-            const deletedIncident = await this.prisma.incidentDetails.delete({
-              where: { id: incident.id },
-              select: { id: true },
-            });
-            return deletedIncident.id;
-          }
-        }),
+        body.incident_details
+          .filter((incident) => incident.orm_code !== 'create')
+          .map(async (incident) => {
+            if (incident.orm_code === 'update') {
+              const updatedIncident = await this.prisma.incidentDetails.update({
+                where: { id: incident.id },
+                data: {
+                  qty: incident.qty,
+                  job_detail: incident.job_detail,
+                  approve_wh: incident.approve_wh,
+                },
+                select: {
+                  id: true,
+                },
+              });
+              return updatedIncident.id;
+            } else if (incident.orm_code === 'delete') {
+              const deletedIncident = await this.prisma.incidentDetails.delete({
+                where: { id: incident.id },
+                select: { id: true },
+              });
+              return deletedIncident.id;
+            }
+          }),
       );
-      return { incident, incidentDetails };
+      return {
+        incident,
+        count: incidentDetails.length + newIncidentDetails.count,
+      };
     });
   }
 
@@ -147,6 +167,17 @@ export class IncidentService {
         },
       });
       return { deletedIncidentDetails, deletedIncident };
+    });
+  }
+  async confirmFirstTier(body: ConfirmFirstTier, user: User) {
+    return this.prisma.incidents.update({
+      where: { id: body.id },
+      data: {
+        on_tier: 'tier_2',
+        status_tier_2: 'open',
+        updated_by: user.id,
+        update_at: new Date(),
+      },
     });
   }
 }
