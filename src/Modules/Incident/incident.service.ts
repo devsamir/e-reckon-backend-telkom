@@ -170,11 +170,54 @@ export class IncidentService {
     });
   }
   async confirmFirstTier(body: ConfirmFirstTier, user: User) {
+    const incident = await this.prisma.incidents.findUnique({
+      where: { id: body.id },
+    });
+    if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
     return this.prisma.incidents.update({
       where: { id: body.id },
       data: {
         on_tier: 'tier_2',
         status_tier_2: 'open',
+        updated_by: user.id,
+        update_at: new Date(),
+      },
+    });
+  }
+  async submitWhSecondTier(body: ConfirmFirstTier, user: User) {
+    const incident = await this.prisma.incidents.findUnique({
+      where: { id: body.id },
+    });
+    if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
+    return this.prisma.incidents.update({
+      where: { id: body.id },
+      data: {
+        on_tier: 'wh',
+        status_wh: 'open',
+        updated_by: user.id,
+        update_at: new Date(),
+      },
+    });
+  }
+  async confirmWhSecondTier(body: ConfirmFirstTier, user: User) {
+    const incident = await this.prisma.incidents.findUnique({
+      where: { id: body.id },
+    });
+    if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
+    const incidentDetails = await this.prisma.incidentDetails.findMany({
+      where: { incident_id: body.id },
+    });
+
+    if (incidentDetails.some((detail) => detail.approve_wh !== 'approved'))
+      throw new BadRequestException(
+        'Tidak bisa confirm WH ke mitra jika ada material yang tidak di approve',
+      );
+
+    return this.prisma.incidents.update({
+      where: { id: body.id },
+      data: {
+        on_tier: 'tier_2',
+        status_tier_2: 'wh_done',
         updated_by: user.id,
         update_at: new Date(),
       },
