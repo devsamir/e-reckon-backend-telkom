@@ -71,4 +71,13 @@ export class IncidentController {
   confirmFirstTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
     return this.incidentService.confirmFirstTier(body, user);
   }
+
+  @Post('/submit-wh-second-tier')
+  submitWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.submitWhSecondTier(body, user);
+  }
+  @Post('/confirm-wh-second-tier')
+  returnWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.confirmWhSecondTier(body, user);
+  }
 }
