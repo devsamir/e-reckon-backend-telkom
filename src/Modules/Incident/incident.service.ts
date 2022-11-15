@@ -199,6 +199,31 @@ export class IncidentService {
       },
     });
   }
+  async returnWhSecondTier(body: ConfirmFirstTier, user: User) {
+    const incident = await this.prisma.incidents.findUnique({
+      where: { id: body.id },
+    });
+    if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
+    const incidentDetails = await this.prisma.incidentDetails.findMany({
+      where: { incident_id: body.id },
+    });
+
+    if (!incidentDetails.find((detail) => detail.approve_wh === 'decline'))
+      throw new BadRequestException(
+        'Tidak return permintaan material WH ke mitra jika tidak ada material yang di decline',
+      );
+
+    return this.prisma.incidents.update({
+      where: { id: body.id },
+      data: {
+        on_tier: 'tier_2',
+        status_tier_2: 'wh_decline',
+        updated_by: user.id,
+        update_at: new Date(),
+      },
+    });
+  }
+
   async confirmWhSecondTier(body: ConfirmFirstTier, user: User) {
     const incident = await this.prisma.incidents.findUnique({
       where: { id: body.id },
