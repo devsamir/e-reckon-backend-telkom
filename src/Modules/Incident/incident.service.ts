@@ -65,6 +65,7 @@ export class IncidentService {
         job_type: body.job_type,
         summary: body.summary,
         incident_code: incidentCode,
+        open_at: body.open_at,
         created_by: user.id,
       },
     });
@@ -179,6 +180,7 @@ export class IncidentService {
       data: {
         on_tier: 'tier_2',
         status_tier_2: 'open',
+        status_tier_1: 'closed',
         updated_by: user.id,
         update_at: new Date(),
       },
@@ -194,6 +196,7 @@ export class IncidentService {
       data: {
         on_tier: 'wh',
         status_wh: 'open',
+        status_tier_2: 'cek_list_by_wh',
         updated_by: user.id,
         update_at: new Date(),
       },
@@ -218,6 +221,7 @@ export class IncidentService {
       data: {
         on_tier: 'tier_2',
         status_tier_2: 'wh_decline',
+        status_wh: 'return',
         updated_by: user.id,
         update_at: new Date(),
       },
@@ -243,6 +247,80 @@ export class IncidentService {
       data: {
         on_tier: 'tier_2',
         status_tier_2: 'wh_done',
+        status_wh: 'closed',
+        updated_by: user.id,
+        update_at: new Date(),
+      },
+    });
+  }
+
+  async submitWhThirdTier(body: ConfirmFirstTier, user: User) {
+    const incident = await this.prisma.incidents.findUnique({
+      where: { id: body.id },
+    });
+    if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
+
+    if (!['wh_done', 'return_by_ta'].includes(incident.status_tier_2))
+      throw new BadRequestException(
+        'Tidak bisa submit ke tier 3 bila status tier 2 belum WH DONE atau RETURN BY TA',
+      );
+
+    const incidentDetails = await this.prisma.incidentDetails.findMany({
+      where: { incident_id: body.id },
+    });
+    if (!incidentDetails.every((detail) => detail.approve_wh === 'approved'))
+      throw new BadRequestException(
+        'Tidak bisa submit ke tier 3 bila masih ada material yang belum di approved',
+      );
+
+    return this.prisma.incidents.update({
+      where: { id: body.id },
+      data: {
+        on_tier: 'tier_3',
+        status_tier_3: 'open',
+        updated_by: user.id,
+        update_at: new Date(),
+      },
+    });
+  }
+
+  async returnToSecondTier(body: ConfirmFirstTier, user: User) {
+    const incident = await this.prisma.incidents.findUnique({
+      where: { id: body.id },
+    });
+    if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
+    if (incident.status_tier_3 !== 'open')
+      throw new BadRequestException(
+        'Tidak bisa return ke tier 2 bila status tier 3 belum Open',
+      );
+    return this.prisma.incidents.update({
+      where: { id: body.id },
+      data: {
+        on_tier: 'tier_2',
+        status_tier_2: 'return_by_ta',
+        status_tier_3: null,
+        updated_by: user.id,
+        update_at: new Date(),
+      },
+    });
+  }
+
+  async closeIncident(body: ConfirmFirstTier, user: User) {
+    const incident = await this.prisma.incidents.findUnique({
+      where: { id: body.id },
+    });
+
+    if (!incident) throw new BadRequestException('Tiket tidak ditemukan');
+    if (incident.status_tier_3 !== 'open')
+      throw new BadRequestException(
+        'Tidak bisa close tiket bila status tier 3 belum OPEN',
+      );
+    return this.prisma.incidents.update({
+      where: { id: body.id },
+      data: {
+        on_tier: 'tier_3',
+        status_tier_2: 'closed_pekerjaan',
+        status_tier_3: 'closed_pekerjaan',
         updated_by: user.id,
         update_at: new Date(),
       },

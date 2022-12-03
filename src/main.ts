@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
 
 import { HttpExceptionFilter } from './Filters/httpException.filter';
+import { PrismaErrorFilter } from './Filters/prismaException.filter';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -12,6 +13,7 @@ async function bootstrap() {
   app.enableCors({ credentials: true, origin: process.env.CLIENT_URL });
 
   // CUSTOM ERROR EXCEPTION
+  app.useGlobalFilters(new PrismaErrorFilter());
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const port = process.env.PORT;

@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -24,6 +25,10 @@ export class CreateIncidentDto {
   })
   @IsNotEmpty({ message: 'Jenis pekerjaan tidak boleh kosong' })
   job_type: string;
+
+  @IsDateString({}, { message: 'Format tanggal salah' })
+  @IsNotEmpty({ message: 'Tanggal tidak boleh kosong' })
+  open_at: string;
 }
 
 export class UpdateIncidentDto {
@@ -42,6 +47,11 @@ export class UpdateIncidentDto {
   @IsNotEmpty({ message: 'Jenis pekerjaan tidak boleh kosong' })
   @IsOptional()
   job_type: string;
+
+  @IsDateString({}, { message: 'Format tanggal salah' })
+  @IsNotEmpty({ message: 'Tanggal tidak boleh kosong' })
+  @IsOptional()
+  open_at: string;
 
   @IsNumber({}, { message: 'Mitra ID harus number' })
   @IsOptional()

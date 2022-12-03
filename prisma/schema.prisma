@@ -119,6 +119,7 @@ model Incidents {
   status_wh      statusWh?
   assignedMitra  Mitra?       @relation(fields: [assigned_mitra], references: [id])
   assigned_mitra Int?
+  open_at        DateTime
   closed_at      DateTime?
 
   created_at      DateTime          @default(now())
