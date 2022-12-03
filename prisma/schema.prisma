@@ -119,6 +119,7 @@ model Incidents {
   status_wh      statusWh?
   assignedMitra  Mitra?       @relation(fields: [assigned_mitra], references: [id])
   assigned_mitra Int?
+  open_at        DateTime
   closed_at      DateTime?
 
   created_at      DateTime          @default(now())
@@ -182,6 +183,8 @@ enum statusTier2 {
   closed_pekerjaan
   cek_list_by_wh
   wh_done
+  return_by_ta
+  wh_decline
 }
 
 enum statusTier3 {

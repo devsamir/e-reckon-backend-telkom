@@ -76,8 +76,26 @@ export class IncidentController {
   submitWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
     return this.incidentService.submitWhSecondTier(body, user);
   }
-  @Post('/confirm-wh-second-tier')
+  @Post('/return-wh-second-tier')
   returnWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.returnWhSecondTier(body, user);
+  }
+
+  @Post('/confirm-wh-second-tier')
+  confirmWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
     return this.incidentService.confirmWhSecondTier(body, user);
+  }
+
+  @Post('/submit-wh-third-tier')
+  submitWhThirdTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.submitWhThirdTier(body, user);
+  }
+  @Post('/return-to-second-tier')
+  returnToSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.returnToSecondTier(body, user);
+  }
+  @Post('/close-incident')
+  closeIncident(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.closeIncident(body, user);
   }
 }
