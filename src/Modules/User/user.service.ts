@@ -88,7 +88,7 @@ export class UserService {
   async delete(ids: number[]) {
     // Check Super Admin
     const users = await this.prisma.user.findMany({
-      where: { level: 99, active: true },
+      where: { role: 'admin', active: true },
     });
 
     const superAdmin = users.filter((user) => ids.includes(user.id));

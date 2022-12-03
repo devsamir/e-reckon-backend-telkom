@@ -78,8 +78,8 @@ export class IncidentService {
 
     // Check if mitra is valid
     if (body.assigned_mitra) {
-      const mitra = await this.prisma.mitra.findFirst({
-        where: { id: body.assigned_mitra, active: true },
+      const mitra = await this.prisma.user.findFirst({
+        where: { id: body.assigned_mitra, role: 'mitra', active: true },
       });
       if (!mitra) throw new BadRequestException('Mitra tidak ditemukan');
     }

@@ -18,13 +18,9 @@ model User {
   active   Boolean @default(true)
 
   fullname   String?
-  level      Int
+  role       Role
   created_at DateTime @default(now())
   update_at  DateTime @updatedAt
-
-  MitraCreated Mitra[] @relation("mitraCreatedBy")
-  MitraUpdated Mitra[] @relation("mitraUpdatedBy")
-  MitraDeleted Mitra[] @relation("mitraDeletedBy")
 
   UnitCreated Unit[] @relation("unitCreatedBy")
   UnitUpdated Unit[] @relation("unitUpdatedBy")
@@ -39,26 +35,7 @@ model User {
 
   IncidentDetailsCreated IncidentDetails[] @relation("incidentDetailsCreatedBy")
   IncidentDetailsUpdated IncidentDetails[] @relation("incidentDetailsUpdatedBy")
-}
-
-model Mitra {
-  id        Int     @id @default(autoincrement())
-  shortname String  @db.VarChar(15)
-  fullname  String  @db.VarChar(100)
-  active    Boolean @default(true)
-
-  created_at DateTime    @default(now())
-  update_at  DateTime?
-  delete_at  DateTime?
-  createdBy  User?       @relation("mitraCreatedBy", fields: [created_by], references: [id])
-  created_by Int?
-  updatedBy  User?       @relation("mitraUpdatedBy", fields: [updated_by], references: [id])
-  updated_by Int?
-  deletedBy  User?       @relation("mitraDeletedBy", fields: [deleted_by], references: [id])
-  deleted_by Int?
-  Incidents  Incidents[]
-
-  @@map("mitra")
+  Incidents              Incidents[]
 }
 
 model Unit {
@@ -117,7 +94,7 @@ model Incidents {
   status_tier_2  statusTier2?
   status_tier_3  statusTier3?
   status_wh      statusWh?
-  assignedMitra  Mitra?       @relation(fields: [assigned_mitra], references: [id])
+  assignedMitra  User?        @relation(fields: [assigned_mitra], references: [id])
   assigned_mitra Int?
   open_at        DateTime
   closed_at      DateTime?
@@ -165,6 +142,14 @@ model LogIncident {
 }
 
 // ENUM
+
+enum Role {
+  admin
+  mitra
+  commerce
+  wh
+  telkom
+}
 
 enum OnTier {
   tier_1
