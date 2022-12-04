@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 
 import { AuthModule } from './Modules/Auth/auth.module';
+import { DatelModule } from './Modules/Datel/datel.module';
 import { IncidentModule } from './Modules/Incident/incident.module';
 import { ItemModule } from './Modules/Item/item.module';
 import { UnitModule } from './Modules/Unit/unit.module';
@@ -17,6 +18,7 @@ import { PrismaModule } from './Prisma/prisma.module';
     }),
     PrismaModule,
     UserModule,
+    DatelModule,
     AuthModule,
     UnitModule,
     ItemModule,

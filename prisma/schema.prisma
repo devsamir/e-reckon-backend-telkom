@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -88,6 +87,8 @@ model Incidents {
   incident       String       @db.VarChar(100)
   summary        String       @db.Text
   job_type       String       @db.VarChar(30)
+  datel_id       Int
+  datel          Datel        @relation(fields: [datel_id], references: [id])
   status         Boolean      @default(false)
   on_tier        OnTier       @default(tier_1)
   status_tier_1  statusTier1  @default(open)
@@ -129,6 +130,20 @@ model IncidentDetails {
   updated_by Int?
 
   @@map("incident_details")
+}
+
+model Witel {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique() @db.VarChar(30)
+  Datel Datel[]
+}
+
+model Datel {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique() @db.VarChar(30)
+  witel_id  Int
+  witel     Witel       @relation(fields: [witel_id], references: [id])
+  Incidents Incidents[]
 }
 
 model LogIncident {
