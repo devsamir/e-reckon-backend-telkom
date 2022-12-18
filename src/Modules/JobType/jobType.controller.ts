@@ -13,6 +13,7 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import { Roles } from '../../Common/decorators/Roles';
 import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
 import {
   ExcludePasswordDto,
@@ -39,6 +40,7 @@ export class JobTypeController {
     return jobTypes;
   }
 
+  @Roles('admin')
   @Post('/create')
   async createUnit(
     @Body() body: CreateUpdateJobTypeDto,
@@ -54,6 +56,7 @@ export class JobTypeController {
     return jobType;
   }
 
+  @Roles('admin')
   @Patch('/write/:id')
   async updateUnit(
     @Param('id', ParseIntPipe) id: number,
@@ -65,6 +68,7 @@ export class JobTypeController {
   }
 
   @HttpCode(204)
+  @Roles('admin')
   @Post('/delete')
   async deleteUser(@Body() body: DeleteDataDto, @GetUser() user: User) {
     await this.jobTypeService.delete(body.ids, user);

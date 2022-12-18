@@ -6,6 +6,8 @@ enum Role {
   commerce = 'commerce',
   wh = 'wh',
   telkom = 'telkom',
+  tl = 'tl',
+  first_tier = 'first_tier',
 }
 
 export class CreateUserDto {

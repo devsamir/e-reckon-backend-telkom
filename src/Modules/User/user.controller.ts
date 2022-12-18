@@ -14,6 +14,7 @@ import {
 
 import { Request } from 'express';
 
+import { Roles } from '../../Common/decorators/Roles';
 import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
 import {
   ExcludePasswordDto,
@@ -41,6 +42,7 @@ export class UserController {
     return users;
   }
 
+  @Roles('admin')
   @Post('/create')
   async createUser(@Body() body: CreateUserDto) {
     const user = await this.userService.create(body);
@@ -62,6 +64,7 @@ export class UserController {
     return user;
   }
 
+  @Roles('admin')
   @Patch('/write/:id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
@@ -72,6 +75,7 @@ export class UserController {
     return user;
   }
 
+  @Roles('admin')
   @HttpCode(204)
   @Post('/delete')
   async deleteUser(@Body() body: DeleteDataDto) {

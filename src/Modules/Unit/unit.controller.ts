@@ -13,6 +13,7 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import { Roles } from '../../Common/decorators/Roles';
 import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
 import {
   ExcludePasswordDto,
@@ -32,6 +33,7 @@ export class UnitController {
   constructor(private unitService: UnitService) {}
 
   @HttpCode(200)
+  @Roles('admin')
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
   async getAllUnit(@Body() body: GetAllQueryDto) {
@@ -39,6 +41,7 @@ export class UnitController {
     return units;
   }
 
+  @Roles('admin')
   @Post('/create')
   async createUnit(@Body() body: CreateUpdateUnitDto, @GetUser() user: User) {
     const unit = await this.unitService.create(body, user);
@@ -51,6 +54,7 @@ export class UnitController {
     return unit;
   }
 
+  @Roles('admin')
   @Patch('/write/:id')
   async updateUnit(
     @Param('id', ParseIntPipe) id: number,
@@ -61,6 +65,7 @@ export class UnitController {
     return unit;
   }
 
+  @Roles('admin')
   @HttpCode(204)
   @Post('/delete')
   async deleteUser(@Body() body: DeleteDataDto, @GetUser() user: User) {

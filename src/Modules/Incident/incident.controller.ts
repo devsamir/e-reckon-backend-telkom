@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { User } from '@prisma/client';
+import { Roles } from 'src/Common/decorators/Roles';
 
 import { GetUser } from '../../Common/decorators/GetUser';
 import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
@@ -42,6 +43,7 @@ export class IncidentController {
     return this.incidentService.getAll(body);
   }
 
+  @Roles('admin', 'tl')
   @Post('/create')
   createIncident(@Body() body: CreateIncidentDto, @GetUser() user: User) {
     return this.incidentService.create(body, user);
@@ -52,6 +54,7 @@ export class IncidentController {
     return this.incidentService.get(id);
   }
 
+  @Roles('admin', 'tl', 'first_tier')
   @Patch('/write/:id')
   async updateIncident(
     @Param('id', ParseIntPipe) id: number,
@@ -61,6 +64,7 @@ export class IncidentController {
     return this.incidentService.update(id, body, user);
   }
 
+  @Roles('admin', 'tl')
   @HttpCode(204)
   @Post('/delete')
   async deleteIncident(@Body() body: DeleteDataDto) {
