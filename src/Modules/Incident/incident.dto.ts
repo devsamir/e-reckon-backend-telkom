@@ -20,11 +20,9 @@ export class CreateIncidentDto {
   @IsNotEmpty({ message: 'Summary tidak boleh kosong' })
   summary: string;
 
-  @MaxLength(30, {
-    message: 'Jenis pekerjaan tidak boleh lebih dari 100 karakter',
-  })
+  @IsNumber({}, { message: 'Jenis pekerjaan ID harus number' })
   @IsNotEmpty({ message: 'Jenis pekerjaan tidak boleh kosong' })
-  job_type: string;
+  job_type_id: number;
 
   @IsNumber({}, { message: 'Datel harus number' })
   datel_id: number;
@@ -48,12 +46,10 @@ export class UpdateIncidentDto {
   @IsOptional()
   summary: string;
 
-  @MaxLength(30, {
-    message: 'Jenis pekerjaan tidak boleh lebih dari 100 karakter',
-  })
+  @IsNumber({}, { message: 'Jenis pekerjaan ID harus number' })
   @IsNotEmpty({ message: 'Jenis pekerjaan tidak boleh kosong' })
   @IsOptional()
-  job_type: string;
+  job_type_id: number;
 
   @IsDateString({}, { message: 'Format tanggal salah' })
   @IsNotEmpty({ message: 'Tanggal tidak boleh kosong' })

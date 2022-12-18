@@ -29,15 +29,15 @@ export class DatelController {
   @Serialize(ExcludePasswordGetAllDto)
   @Post('/search_read')
   async getAllDatel(@Body() body: GetAllQueryDto) {
-    const users = await this.datelService.getAll(body);
+    const datels = await this.datelService.getAll(body);
 
-    return users;
+    return datels;
   }
 
   @Get('/read/:id')
   async getDatel(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.datelService.get(id);
+    const datel = await this.datelService.get(id);
 
-    return user;
+    return datel;
   }
 }

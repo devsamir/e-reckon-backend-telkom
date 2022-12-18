@@ -11,11 +11,11 @@ export class DatelService {
     const generatedQuery = generateQuery(query);
     const [length, data] = await Promise.all([
       this.prisma.datel.count({
-        where: { ...generatedQuery.where, active: true },
+        where: generatedQuery.where,
       }),
       this.prisma.datel.findMany({
         ...generatedQuery,
-        where: { ...generatedQuery.where, active: true },
+        where: generatedQuery.where,
       }),
     ]).catch((err) => {
       throw new InternalServerErrorException('Query pencarian salah');

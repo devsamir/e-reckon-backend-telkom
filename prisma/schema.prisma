@@ -35,6 +35,9 @@ model User {
   IncidentDetailsCreated IncidentDetails[] @relation("incidentDetailsCreatedBy")
   IncidentDetailsUpdated IncidentDetails[] @relation("incidentDetailsUpdatedBy")
   Incidents              Incidents[]
+  JobTypeCreated         JobType[]         @relation("jobTypeCreatedBy")
+  JobTypeUpdated         JobType[]         @relation("jobTypeUpdatedBy")
+  JobTypeDeleted         JobType[]         @relation("jobTypeDeletedBy")
 }
 
 model Unit {
@@ -86,7 +89,8 @@ model Incidents {
   incident_code  String       @unique() @db.VarChar(30)
   incident       String       @db.VarChar(100)
   summary        String       @db.Text
-  job_type       String       @db.VarChar(30)
+  job_type_id    Int
+  job_type       JobType      @relation(fields: [job_type_id], references: [id])
   datel_id       Int
   datel          Datel        @relation(fields: [datel_id], references: [id])
   status         Boolean      @default(false)
@@ -144,6 +148,23 @@ model Datel {
   witel_id  Int
   witel     Witel       @relation(fields: [witel_id], references: [id])
   Incidents Incidents[]
+}
+
+model JobType {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique() @db.VarChar(30)
+  Incidents Incidents[]
+  active    Boolean     @default(true)
+
+  created_at DateTime  @default(now())
+  update_at  DateTime?
+  delete_at  DateTime?
+  createdBy  User?     @relation("jobTypeCreatedBy", fields: [created_by], references: [id])
+  created_by Int?
+  updatedBy  User?     @relation("jobTypeUpdatedBy", fields: [updated_by], references: [id])
+  updated_by Int?
+  deletedBy  User?     @relation("jobTypeDeletedBy", fields: [deleted_by], references: [id])
+  deleted_by Int?
 }
 
 model LogIncident {
