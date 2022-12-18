@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+
+enum Role {
+  admin = 'admin',
+  mitra = 'mitra',
+  commerce = 'commerce',
+  wh = 'wh',
+  telkom = 'telkom',
+}
+
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Username tidak boleh kosong' })
   username: string;
@@ -9,25 +18,25 @@ export class CreateUserDto {
   @IsOptional()
   fullname?: string;
 
-  @IsNumber({}, { message: 'Level harus berupa angka' })
-  @IsNotEmpty({ message: 'Level user tidak boleh kosong' })
-  level: number;
+  @IsEnum(Role, { message: 'Role user tidak sesuai' })
+  @IsNotEmpty({ message: 'Role user tidak boleh kosong' })
+  role: Role;
 }
 
 export class UpdateUserDto {
-  @IsOptional()
   @IsNotEmpty({ message: 'Username tidak boleh kosong' })
+  @IsOptional()
   username?: string;
 
-  @IsOptional()
   @IsNotEmpty({ message: 'Password tidak boleh kosong' })
+  @IsOptional()
   password?: string;
 
   @IsOptional()
   fullname?: string;
 
+  @IsEnum(Role, { message: 'Role user tidak sesuai' })
+  @IsNotEmpty({ message: 'Role user tidak boleh kosong' })
   @IsOptional()
-  @IsNumber({}, { message: 'Level harus berupa angka' })
-  @IsNotEmpty({ message: 'Level user tidak boleh kosong' })
-  level?: number;
+  role: Role;
 }

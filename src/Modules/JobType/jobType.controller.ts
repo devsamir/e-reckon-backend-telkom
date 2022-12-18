@@ -22,46 +22,52 @@ import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import { CreateMitraDto, UpdateMitraDto } from './mitra.dto';
-import { MitraService } from './mitra.service';
+import { CreateUpdateJobTypeDto } from './jobType.dto';
+import { JobTypeService } from './jobType.service';
 
-@Controller('mitra')
+@Controller('job-type')
 @Serialize(ExcludePasswordDto)
 @UseGuards(AdminGuard)
-export class MitraController {
-  constructor(private mitraService: MitraService) {}
+export class JobTypeController {
+  constructor(private jobTypeService: JobTypeService) {}
 
   @HttpCode(200)
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
   async getAllUnit(@Body() body: GetAllQueryDto) {
-    return this.mitraService.getAll(body);
+    const jobTypes = await this.jobTypeService.getAll(body);
+    return jobTypes;
   }
 
   @Post('/create')
-  async createItem(@Body() body: CreateMitraDto, @GetUser() user: User) {
-    return this.mitraService.create(body, user);
+  async createUnit(
+    @Body() body: CreateUpdateJobTypeDto,
+    @GetUser() user: User,
+  ) {
+    const jobType = await this.jobTypeService.create(body, user);
+    return jobType;
   }
 
   @Get('/read/:id')
-  async getItem(@Param('id', ParseIntPipe) id: number) {
-    return this.mitraService.get(id);
+  async getUnit(@Param('id', ParseIntPipe) id: number) {
+    const jobType = await this.jobTypeService.get(id);
+    return jobType;
   }
 
   @Patch('/write/:id')
-  async updateItem(
+  async updateUnit(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateMitraDto,
+    @Body() body: CreateUpdateJobTypeDto,
     @GetUser() user: User,
   ) {
-    const unit = await this.mitraService.update(id, body, user);
-    return unit;
+    const jobType = await this.jobTypeService.update(id, body, user);
+    return jobType;
   }
 
   @HttpCode(204)
   @Post('/delete')
-  async deleteItem(@Body() body: DeleteDataDto, @GetUser() user: User) {
-    await this.mitraService.delete(body.ids, user);
+  async deleteUser(@Body() body: DeleteDataDto, @GetUser() user: User) {
+    await this.jobTypeService.delete(body.ids, user);
     return null;
   }
 }

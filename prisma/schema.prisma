@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -18,13 +17,9 @@ model User {
   active   Boolean @default(true)
 
   fullname   String?
-  level      Int
+  role       Role
   created_at DateTime @default(now())
   update_at  DateTime @updatedAt
-
-  MitraCreated Mitra[] @relation("mitraCreatedBy")
-  MitraUpdated Mitra[] @relation("mitraUpdatedBy")
-  MitraDeleted Mitra[] @relation("mitraDeletedBy")
 
   UnitCreated Unit[] @relation("unitCreatedBy")
   UnitUpdated Unit[] @relation("unitUpdatedBy")
@@ -39,26 +34,10 @@ model User {
 
   IncidentDetailsCreated IncidentDetails[] @relation("incidentDetailsCreatedBy")
   IncidentDetailsUpdated IncidentDetails[] @relation("incidentDetailsUpdatedBy")
-}
-
-model Mitra {
-  id        Int     @id @default(autoincrement())
-  shortname String  @db.VarChar(15)
-  fullname  String  @db.VarChar(100)
-  active    Boolean @default(true)
-
-  created_at DateTime    @default(now())
-  update_at  DateTime?
-  delete_at  DateTime?
-  createdBy  User?       @relation("mitraCreatedBy", fields: [created_by], references: [id])
-  created_by Int?
-  updatedBy  User?       @relation("mitraUpdatedBy", fields: [updated_by], references: [id])
-  updated_by Int?
-  deletedBy  User?       @relation("mitraDeletedBy", fields: [deleted_by], references: [id])
-  deleted_by Int?
-  Incidents  Incidents[]
-
-  @@map("mitra")
+  Incidents              Incidents[]
+  JobTypeCreated         JobType[]         @relation("jobTypeCreatedBy")
+  JobTypeUpdated         JobType[]         @relation("jobTypeUpdatedBy")
+  JobTypeDeleted         JobType[]         @relation("jobTypeDeletedBy")
 }
 
 model Unit {
@@ -110,14 +89,17 @@ model Incidents {
   incident_code  String       @unique() @db.VarChar(30)
   incident       String       @db.VarChar(100)
   summary        String       @db.Text
-  job_type       String       @db.VarChar(30)
+  job_type_id    Int
+  job_type       JobType      @relation(fields: [job_type_id], references: [id])
+  datel_id       Int
+  datel          Datel        @relation(fields: [datel_id], references: [id])
   status         Boolean      @default(false)
   on_tier        OnTier       @default(tier_1)
   status_tier_1  statusTier1  @default(open)
   status_tier_2  statusTier2?
   status_tier_3  statusTier3?
   status_wh      statusWh?
-  assignedMitra  Mitra?       @relation(fields: [assigned_mitra], references: [id])
+  assignedMitra  User?        @relation(fields: [assigned_mitra], references: [id])
   assigned_mitra Int?
   open_at        DateTime
   closed_at      DateTime?
@@ -154,6 +136,37 @@ model IncidentDetails {
   @@map("incident_details")
 }
 
+model Witel {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique() @db.VarChar(30)
+  Datel Datel[]
+}
+
+model Datel {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique() @db.VarChar(30)
+  witel_id  Int
+  witel     Witel       @relation(fields: [witel_id], references: [id])
+  Incidents Incidents[]
+}
+
+model JobType {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique() @db.VarChar(30)
+  Incidents Incidents[]
+  active    Boolean     @default(true)
+
+  created_at DateTime  @default(now())
+  update_at  DateTime?
+  delete_at  DateTime?
+  createdBy  User?     @relation("jobTypeCreatedBy", fields: [created_by], references: [id])
+  created_by Int?
+  updatedBy  User?     @relation("jobTypeUpdatedBy", fields: [updated_by], references: [id])
+  updated_by Int?
+  deletedBy  User?     @relation("jobTypeDeletedBy", fields: [deleted_by], references: [id])
+  deleted_by Int?
+}
+
 model LogIncident {
   id        Int      @id @default(autoincrement())
   action_on DateTime
@@ -165,6 +178,14 @@ model LogIncident {
 }
 
 // ENUM
+
+enum Role {
+  admin
+  mitra
+  commerce
+  wh
+  telkom
+}
 
 enum OnTier {
   tier_1

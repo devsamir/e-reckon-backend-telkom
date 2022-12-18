@@ -59,12 +59,29 @@ export class IncidentService {
     // Generate Incident Code
     const incidentCode = await generateIncidentCode(this.prisma);
 
+    // Check if datel is exist
+    const datelPromise = this.prisma.datel.findUnique({
+      where: { id: body.datel_id },
+    });
+
+    // Check if incident is exist
+    const jobTypePromise = this.prisma.jobType.findUnique({
+      where: { id: body.job_type_id },
+    });
+    // make it run parallel with promise.all
+    const [datel, jobType] = await Promise.all([datelPromise, jobTypePromise]);
+
+    if (!datel) throw new BadRequestException('Datel tidak ditemukan');
+    if (!jobType)
+      throw new BadRequestException('Jenis pekerjaan tidak ditemukan');
+
     return this.prisma.incidents.create({
       data: {
         incident: body.incident,
-        job_type: body.job_type,
+        job_type_id: body.job_type_id,
         summary: body.summary,
         incident_code: incidentCode,
+        datel_id: body.datel_id,
         open_at: body.open_at,
         created_by: user.id,
       },
@@ -78,10 +95,18 @@ export class IncidentService {
 
     // Check if mitra is valid
     if (body.assigned_mitra) {
-      const mitra = await this.prisma.mitra.findFirst({
-        where: { id: body.assigned_mitra, active: true },
+      const mitra = await this.prisma.user.findFirst({
+        where: { id: body.assigned_mitra, role: 'mitra', active: true },
       });
       if (!mitra) throw new BadRequestException('Mitra tidak ditemukan');
+    }
+
+    // Check if datel is valid
+    if (body.datel_id) {
+      const datel = await this.prisma.datel.findUnique({
+        where: { id: body.datel_id },
+      });
+      if (!datel) throw new BadRequestException('Datel tidak ditemukan');
     }
 
     if (body?.incident_details?.length) {
@@ -94,14 +119,14 @@ export class IncidentService {
       if (itemIds.length !== countItem)
         throw new BadRequestException('Material tidak valid');
     }
-
     return this.prisma.$transaction(async () => {
       const incident = await this.prisma.incidents.update({
         where: { id },
         data: {
           incident: body.incident,
-          job_type: body.job_type,
+          job_type_id: body.job_type_id,
           summary: body.summary,
+          datel_id: body.datel_id,
           assigned_mitra: body?.assigned_mitra,
           updated_by: user.id,
           update_at: new Date(),
