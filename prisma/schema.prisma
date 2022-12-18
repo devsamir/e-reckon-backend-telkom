@@ -185,6 +185,8 @@ enum Role {
   commerce
   wh
   telkom
+  tl
+  first_tier
 }
 
 enum OnTier {

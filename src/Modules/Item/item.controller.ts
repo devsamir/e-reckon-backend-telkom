@@ -13,6 +13,7 @@ import {
 import { User } from '@prisma/client';
 
 import { GetUser } from '../../Common/decorators/GetUser';
+import { Roles } from '../../Common/decorators/Roles';
 import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
 import {
   ExcludePasswordDto,
@@ -38,6 +39,7 @@ export class ItemController {
     return this.itemService.getAll(body);
   }
 
+  @Roles('admin', 'wh')
   @Post('/create')
   async createItem(@Body() body: CreateItemDto, @GetUser() user: User) {
     return this.itemService.create(body, user);
@@ -48,6 +50,7 @@ export class ItemController {
     return this.itemService.get(id);
   }
 
+  @Roles('admin', 'wh', 'commerce')
   @Patch('/write/:id')
   async updateItem(
     @Param('id', ParseIntPipe) id: number,
@@ -59,6 +62,7 @@ export class ItemController {
   }
 
   @HttpCode(204)
+  @Roles('admin', 'wh')
   @Post('/delete')
   async deleteItem(@Body() body: DeleteDataDto, @GetUser() user: User) {
     await this.itemService.delete(body.ids, user);

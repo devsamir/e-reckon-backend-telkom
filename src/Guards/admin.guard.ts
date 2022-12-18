@@ -4,6 +4,7 @@ import {
   Inject,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
 import { User } from '@prisma/client';
 import { Request } from 'express';
@@ -19,8 +20,12 @@ declare global {
 }
 
 export class AdminGuard implements CanActivate {
-  constructor(@Inject(AuthService) private authService: AuthService) {}
+  constructor(
+    @Inject(AuthService) private authService: AuthService,
+    private reflector: Reflector,
+  ) {}
   async canActivate(context: ExecutionContext) {
+    // Authentication
     const req = context.switchToHttp().getRequest<Request>();
     const token: any = req.headers?.['token'];
     if (!token)
@@ -30,9 +35,20 @@ export class AdminGuard implements CanActivate {
     const user = await this.authService.validateToken(token);
     if (!user)
       throw new UnauthorizedException(
-        'anda tidak memiliki hak untuk melakukan aksi ini',
+        'Anda tidak memiliki hak untuk melakukan aksi ini',
       );
     req.user = user;
+    // Authorization
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+
+    if (!roles) {
+      return true;
+    }
+    if (!roles.includes(user.role))
+      throw new UnauthorizedException(
+        'Anda tidak memiliki hak untuk melakukan aksi ini',
+      );
+
     return true;
   }
 }
