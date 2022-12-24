@@ -33,7 +33,6 @@ export class UnitController {
   constructor(private unitService: UnitService) {}
 
   @HttpCode(200)
-  @Roles('admin')
   @Post('/search_read')
   @Serialize(ExcludePasswordGetAllDto)
   async getAllUnit(@Body() body: GetAllQueryDto) {

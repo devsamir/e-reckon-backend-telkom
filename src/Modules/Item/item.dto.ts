@@ -21,21 +21,21 @@ export class CreateItemDto {
   @IsNotEmpty({ message: 'Unit tidak boleh kosong' })
   unit_id: number;
 
-  @IsNumber({}, { message: 'Harga material telkom harus number' })
-  @IsNotEmpty({ message: 'Harga material telkom tidak boleh kosong' })
-  material_price_telkom: number;
+  // @IsNumber({}, { message: 'Harga material telkom harus number' })
+  // @IsNotEmpty({ message: 'Harga material telkom tidak boleh kosong' })
+  // material_price_telkom: number;
 
-  @IsNumber({}, { message: 'Harga service telkom harus number' })
-  @IsNotEmpty({ message: 'Harga service telkom tidak boleh kosong' })
-  service_price_telkom: number;
+  // @IsNumber({}, { message: 'Harga service telkom harus number' })
+  // @IsNotEmpty({ message: 'Harga service telkom tidak boleh kosong' })
+  // service_price_telkom: number;
 
-  @IsNumber({}, { message: 'Harga material mitra harus number' })
-  @IsNotEmpty({ message: 'Harga material mitra tidak boleh kosong' })
-  material_price_mitra: number;
+  // @IsNumber({}, { message: 'Harga material mitra harus number' })
+  // @IsNotEmpty({ message: 'Harga material mitra tidak boleh kosong' })
+  // material_price_mitra: number;
 
-  @IsNumber({}, { message: 'Harga service mitra harus number' })
-  @IsNotEmpty({ message: 'Harga service mitra tidak boleh kosong' })
-  service_price_mitra: number;
+  // @IsNumber({}, { message: 'Harga service mitra harus number' })
+  // @IsNotEmpty({ message: 'Harga service mitra tidak boleh kosong' })
+  // service_price_mitra: number;
 }
 
 export class UpdateItemDto {
