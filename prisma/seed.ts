@@ -40,7 +40,6 @@ async function main() {
       witel_id: witel.id,
     })),
   });
-  console.log({ user, witel, datel });
 }
 main()
   .then(async () => {

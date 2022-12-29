@@ -99,10 +99,15 @@ export class UpdateIncidentDetails {
   @IsOptional()
   job_detail: string;
 
-  @IsNumber({}, { message: 'Jumlah material harus number' })
-  @IsNotEmpty({ message: 'Jumlah material tidak boleh kosong' })
+  @IsNumber({}, { message: 'qty harus number' })
+  @IsNotEmpty({ message: 'qty tidak boleh kosong' })
   @IsOptional()
   qty: number;
+
+  @IsNumber({}, { message: 'qty Actual harus number' })
+  @IsNotEmpty({ message: 'qty Actual tidak boleh kosong' })
+  @IsOptional()
+  actual_qty: number;
 
   @IsEnum(ApproveWh, { message: 'Approve WH tidak sesuai' })
   @IsOptional()
