@@ -124,6 +124,7 @@ model IncidentDetails {
 
   job_detail String?   @db.Text
   qty        Int
+  actual_qty Int?      @default(0)
   approve_wh ApproveWh @default(not_yet)
 
   created_at DateTime  @default(now())
@@ -194,20 +195,21 @@ enum OnTier {
   tier_2
   tier_3
   wh
+  commerce
 }
 
 enum statusTier1 {
   open
   closed
+  mitra_done
+  return_to_mitra
 }
 
 enum statusTier2 {
   open
+  mitra_done
   closed_pekerjaan
-  cek_list_by_wh
-  wh_done
-  return_by_ta
-  wh_decline
+  return_by_tier_1
 }
 
 enum statusTier3 {

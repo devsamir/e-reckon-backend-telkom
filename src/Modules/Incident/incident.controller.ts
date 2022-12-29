@@ -54,7 +54,7 @@ export class IncidentController {
     return this.incidentService.get(id);
   }
 
-  @Roles('admin', 'tl', 'first_tier')
+  @Roles('admin', 'tl', 'first_tier', 'mitra')
   @Patch('/write/:id')
   async updateIncident(
     @Param('id', ParseIntPipe) id: number,
@@ -76,27 +76,13 @@ export class IncidentController {
     return this.incidentService.confirmFirstTier(body, user);
   }
 
-  @Post('/submit-wh-second-tier')
-  submitWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
-    return this.incidentService.submitWhSecondTier(body, user);
+  @Post('/finish-incident-mitra')
+  finishIncidentMitra(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
+    return this.incidentService.finishIncidentMitra(body, user);
   }
-  @Post('/return-wh-second-tier')
+  @Post('/return-to-mitra')
   returnWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
-    return this.incidentService.returnWhSecondTier(body, user);
-  }
-
-  @Post('/confirm-wh-second-tier')
-  confirmWhSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
-    return this.incidentService.confirmWhSecondTier(body, user);
-  }
-
-  @Post('/submit-wh-third-tier')
-  submitWhThirdTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
-    return this.incidentService.submitWhThirdTier(body, user);
-  }
-  @Post('/return-to-second-tier')
-  returnToSecondTier(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
-    return this.incidentService.returnToSecondTier(body, user);
+    return this.incidentService.returnToMitra(body, user);
   }
   @Post('/close-incident')
   closeIncident(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
