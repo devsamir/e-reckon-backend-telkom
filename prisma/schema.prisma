@@ -38,6 +38,8 @@ model User {
   JobTypeCreated         JobType[]         @relation("jobTypeCreatedBy")
   JobTypeUpdated         JobType[]         @relation("jobTypeUpdatedBy")
   JobTypeDeleted         JobType[]         @relation("jobTypeDeletedBy")
+
+  @@map("user")
 }
 
 model Unit {
@@ -55,6 +57,8 @@ model Unit {
   deletedBy  User?     @relation("unitDeletedBy", fields: [deleted_by], references: [id])
   deleted_by Int?
   Items      Items[]
+
+  @@map("unit")
 }
 
 model Items {
@@ -149,6 +153,8 @@ model Datel {
   witel_id  Int
   witel     Witel       @relation(fields: [witel_id], references: [id])
   Incidents Incidents[]
+
+  @@map("datel")
 }
 
 model JobType {
@@ -166,6 +172,8 @@ model JobType {
   updated_by Int?
   deletedBy  User?     @relation("jobTypeDeletedBy", fields: [deleted_by], references: [id])
   deleted_by Int?
+  
+  @@map("job_type")
 }
 
 model LogIncident {
