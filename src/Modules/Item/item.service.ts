@@ -63,7 +63,7 @@ export class ItemService {
         throw new BadRequestException('Material designator sudah dipakai');
 
       if (item.service_designator === body.service_designator)
-        throw new BadRequestException('Service designator sudah dipakai');
+        throw new BadRequestException('Jasa designator sudah dipakai');
     }
     // Check if unit is valid
     const unit = await this.unitService.get(body.unit_id);
@@ -104,7 +104,7 @@ export class ItemService {
         throw new BadRequestException('Material designator sudah dipakai');
 
       if (item.service_designator === body.service_designator)
-        throw new BadRequestException('Service designator sudah dipakai');
+        throw new BadRequestException('Jasa designator sudah dipakai');
     }
     if (body.unit_id) {
       // Check if item is valid

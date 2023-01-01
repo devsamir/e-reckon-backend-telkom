@@ -12,9 +12,9 @@ export class CreateItemDto {
   material_designator: string;
 
   @MaxLength(100, {
-    message: 'Service designator tidak boleh lebih dari 100 karakter',
+    message: 'Jasa designator tidak boleh lebih dari 100 karakter',
   })
-  @IsNotEmpty({ message: 'Service designator tidak boleh kosong' })
+  @IsNotEmpty({ message: 'Jasa designator tidak boleh kosong' })
   service_designator: string;
 
   @IsNumber({}, { message: 'Unit ID harus number' })
@@ -25,16 +25,16 @@ export class CreateItemDto {
   // @IsNotEmpty({ message: 'Harga material telkom tidak boleh kosong' })
   // material_price_telkom: number;
 
-  // @IsNumber({}, { message: 'Harga service telkom harus number' })
-  // @IsNotEmpty({ message: 'Harga service telkom tidak boleh kosong' })
+  // @IsNumber({}, { message: 'Harga jasa telkom harus number' })
+  // @IsNotEmpty({ message: 'Harga jasa telkom tidak boleh kosong' })
   // service_price_telkom: number;
 
   // @IsNumber({}, { message: 'Harga material mitra harus number' })
   // @IsNotEmpty({ message: 'Harga material mitra tidak boleh kosong' })
   // material_price_mitra: number;
 
-  // @IsNumber({}, { message: 'Harga service mitra harus number' })
-  // @IsNotEmpty({ message: 'Harga service mitra tidak boleh kosong' })
+  // @IsNumber({}, { message: 'Harga jasa mitra harus number' })
+  // @IsNotEmpty({ message: 'Harga jasa mitra tidak boleh kosong' })
   // service_price_mitra: number;
 }
 
@@ -52,9 +52,9 @@ export class UpdateItemDto {
   material_designator: string;
 
   @MaxLength(100, {
-    message: 'Service designator tidak boleh lebih dari 100 karakter',
+    message: 'Jasa designator tidak boleh lebih dari 100 karakter',
   })
-  @IsNotEmpty({ message: 'Service designator tidak boleh kosong' })
+  @IsNotEmpty({ message: 'Jasa designator tidak boleh kosong' })
   @IsOptional()
   service_designator: string;
 
@@ -68,8 +68,8 @@ export class UpdateItemDto {
   @IsOptional()
   material_price_telkom: number;
 
-  @IsNumber({}, { message: 'Harga service telkom harus number' })
-  @IsNotEmpty({ message: 'Harga service telkom tidak boleh kosong' })
+  @IsNumber({}, { message: 'Harga jasa telkom harus number' })
+  @IsNotEmpty({ message: 'Harga jasa telkom tidak boleh kosong' })
   @IsOptional()
   service_price_telkom: number;
 
@@ -78,8 +78,8 @@ export class UpdateItemDto {
   @IsOptional()
   material_price_mitra: number;
 
-  @IsNumber({}, { message: 'Harga service mitra harus number' })
-  @IsNotEmpty({ message: 'Harga service mitra tidak boleh kosong' })
+  @IsNumber({}, { message: 'Harga jasa mitra harus number' })
+  @IsNotEmpty({ message: 'Harga jasa mitra tidak boleh kosong' })
   @IsOptional()
   service_price_mitra: number;
 }
