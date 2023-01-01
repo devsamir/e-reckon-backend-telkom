@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { User } from '@prisma/client';
 import { Request } from 'express';
+import { User } from 'src/Modules/User/user.entity';
 
 import { AuthService } from '../Modules/Auth/auth.service';
 

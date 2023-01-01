@@ -3,6 +3,6 @@ interface GetAllQuery {
   offset?: number;
   domain?: any;
   sort?: string;
-  fields?: string[];
+  fields?: any[];
   include?: string[];
 }
