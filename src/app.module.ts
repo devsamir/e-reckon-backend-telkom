@@ -8,6 +8,7 @@ import { DatelModule } from './Modules/Datel/datel.module';
 import { IncidentModule } from './Modules/Incident/incident.module';
 import { ItemModule } from './Modules/Item/item.module';
 import { JobTypeModule } from './Modules/JobType/jobType.module';
+import { Unit } from './Modules/Unit/unit.entity';
 import { UnitModule } from './Modules/Unit/unit.module';
 import { User } from './Modules/User/user.entity';
 import { UserModule } from './Modules/User/user.module';
@@ -26,8 +27,8 @@ import { PrismaModule } from './Prisma/prisma.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User],
-      synchronize: false,
+      entities: [User, Unit],
+      synchronize: true,
       logging: true,
     }),
     UserModule,
