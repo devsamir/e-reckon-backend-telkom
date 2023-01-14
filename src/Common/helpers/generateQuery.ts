@@ -1,4 +1,4 @@
-import { LessThanOrEqual, Like, MoreThanOrEqual } from 'typeorm';
+import { In, LessThanOrEqual, Like, MoreThanOrEqual } from 'typeorm';
 
 export const generateQuery = (query: GetAllQuery) => {
   // Relations
@@ -30,6 +30,8 @@ export const generateQuery = (query: GetAllQuery) => {
         acc[curr[0]] = MoreThanOrEqual(curr[2]);
       } else if (curr[1] === 'lte') {
         acc[curr[0]] = LessThanOrEqual(curr[2]);
+      } else if (curr[1] === 'in') {
+        acc[curr[0]] = In(curr[2]);
       } else {
         acc[curr[0]] = curr[2];
       }

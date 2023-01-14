@@ -4,6 +4,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from './Modules/Auth/auth.module';
+import { Datel, Witel } from './Modules/Datel/datel.entity';
 import { DatelModule } from './Modules/Datel/datel.module';
 import { IncidentModule } from './Modules/Incident/incident.module';
 import { ItemModule } from './Modules/Item/item.module';
@@ -28,7 +29,7 @@ import { PrismaModule } from './Prisma/prisma.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, Unit, JobType],
+      entities: [User, Unit, JobType, Witel, Datel],
       synchronize: true,
       logging: true,
     }),
