@@ -3,29 +3,33 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '@prisma/client';
+import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
 import { PrismaService } from '../../Prisma/prisma.service';
 import { UnitService } from '../Unit/unit.service';
 
 import { CreateItemDto, UpdateItemDto } from './item.dto';
+import { Item } from './item.entity';
 
 @Injectable()
 export class ItemService {
   constructor(
-    private prisma: PrismaService,
+    @InjectRepository(Item) private item: Repository<Item>,
     private unitService: UnitService,
   ) {}
 
   async getAll(body: GetAllQuery) {
     const generatedQuery = generateQuery(body);
+    console.log({ where: generatedQuery.where });
     const [length, data] = await Promise.all([
-      this.prisma.items.count({
+      this.item.count({
         where: { ...generatedQuery.where, active: true },
       }),
-      this.prisma.items.findMany({
+      this.item.find({
         ...generatedQuery,
         where: { ...generatedQuery.where, active: true },
       }),
@@ -37,22 +41,19 @@ export class ItemService {
   }
 
   async get(id: number) {
-    return this.prisma.items.findFirst({
+    return this.item.findOne({
       where: { id, active: true },
     });
   }
 
   async create(body: CreateItemDto, user: User) {
     //   // Check if unique key is already in use
-    const item = await this.prisma.items.findFirst({
-      where: {
-        OR: [
-          { item_code: body.item_code },
-          { material_designator: body.material_designator },
-          { service_designator: body.service_designator },
-        ],
-        active: true,
-      },
+    const item = await this.item.findOne({
+      where: [
+        { item_code: body.item_code, active: true },
+        { material_designator: body.material_designator, active: true },
+        { service_designator: body.service_designator, active: true },
+      ],
     });
 
     if (item) {
@@ -70,31 +71,37 @@ export class ItemService {
 
     if (!unit) throw new BadRequestException('Unit tidak valid');
 
-    return this.prisma.items.create({
-      data: { ...body, created_by: user.id },
+    const newUnit = this.item.create({
+      ...body,
+      unit_id: { id: unit.id },
+      created_by: { id: user.id },
     });
+
+    return this.item.save(newUnit);
   }
 
   async update(id: number, body: UpdateItemDto, user: User) {
     // Check if item
-    const oldItem = await this.prisma.items.findFirst({
+    const oldItem = await this.item.findOne({
       where: { id, active: true },
     });
 
     if (!oldItem) throw new BadRequestException('Item tidak ditemukan');
     // Check if unique key is already in use
-    const item = await this.prisma.items.findFirst({
-      where: {
-        OR: [
-          { item_code: body.item_code },
-          { material_designator: body.material_designator },
-          { service_designator: body.service_designator },
-        ],
-        active: true,
-        NOT: {
-          id,
+    const item = await this.item.findOne({
+      where: [
+        { item_code: body.item_code, active: true, id: Not(id) },
+        {
+          material_designator: body.material_designator,
+          active: true,
+          id: Not(id),
         },
-      },
+        {
+          service_designator: body.service_designator,
+          active: true,
+          id: Not(id),
+        },
+      ],
     });
     if (item) {
       if (item.item_code === body.item_code)
@@ -113,17 +120,20 @@ export class ItemService {
       if (!unit) throw new BadRequestException('Unit tidak valid');
     }
 
-    return this.prisma.items.update({
-      where: { id },
-      data: { ...body, updated_by: user.id, update_at: new Date() },
+    return this.item.update(id, {
+      ...body,
+      unit_id: { id: body.unit_id },
+      updated_by: { id: user.id },
+      update_at: new Date(),
     });
   }
 
   async delete(ids: number[], user: User) {
-    return this.prisma.items
-      .updateMany({
-        where: { id: { in: ids } },
-        data: { active: false, deleted_by: user.id, delete_at: new Date() },
+    return this.item
+      .update(ids, {
+        active: false,
+        deleted_by: { id: user.id },
+        delete_at: new Date(),
       })
       .catch(() => {
         throw new BadRequestException('Item tidak ditemukan');
