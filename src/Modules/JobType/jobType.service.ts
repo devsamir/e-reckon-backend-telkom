@@ -3,25 +3,29 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '@prisma/client';
+import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
-import { PrismaService } from '../../Prisma/prisma.service';
 
 import { CreateUpdateJobTypeDto } from './jobType.dto';
+import { JobType } from './jobType.entity';
 
 @Injectable()
 export class JobTypeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(JobType) private jobType: Repository<JobType>,
+  ) {}
 
   async getAll(body: GetAllQuery) {
     const generatedQuery = generateQuery(body);
     const [length, data] = await Promise.all([
-      this.prisma.jobType.count({
+      this.jobType.count({
         where: { ...generatedQuery.where, active: true },
       }),
-      this.prisma.jobType.findMany({
+      this.jobType.find({
         ...generatedQuery,
         where: { ...generatedQuery.where, active: true },
       }),
@@ -33,62 +37,60 @@ export class JobTypeService {
   }
 
   async get(id: number) {
-    return this.prisma.jobType.findFirst({
+    return this.jobType.findOne({
       where: { id, active: true },
     });
   }
 
   async create(body: CreateUpdateJobTypeDto, user: User) {
     // Check if username is already in use
-    const unit = await this.prisma.jobType.findFirst({
+    const unit = await this.jobType.findOne({
       where: { name: body.name, active: true },
     });
     if (unit)
       throw new BadRequestException('Nama jenis pekerjaan sudah dipakai');
 
-    return this.prisma.jobType.create({
-      data: { name: body.name, created_by: user.id },
-      include: { createdBy: true },
+    const newJobType = this.jobType.create({
+      name: body.name,
+      created_by: { id: user.id },
     });
+
+    return this.jobType.save(newJobType);
   }
 
   async update(id: number, body: CreateUpdateJobTypeDto, user: User) {
     // Check if user exist
-    const oldUnit = await this.prisma.jobType.findFirst({
+    const oldUnit = await this.jobType.findOne({
       where: { id, active: true },
     });
     if (!oldUnit)
       throw new BadRequestException('Jenis pekerjaan tidak ditemukan');
 
     // Check if unit name available
-    const isUnitAlreadyInUse = await this.prisma.jobType.findFirst({
+    const isUnitAlreadyInUse = await this.jobType.findOne({
       where: {
         name: body.name,
         active: true,
-        NOT: {
-          id,
-        },
+        id: Not(id),
       },
     });
 
     if (isUnitAlreadyInUse)
       throw new BadRequestException('Nama jenis pekerjaan sudah dipakai');
 
-    return this.prisma.jobType.update({
-      where: { id },
-      data: {
-        name: body.name,
-        updated_by: user.id,
-        update_at: new Date(),
-      },
+    return this.jobType.update(id, {
+      name: body.name,
+      updated_by: { id: user.id },
+      update_at: new Date(),
     });
   }
 
   async delete(ids: number[], user: User) {
-    return this.prisma.jobType
-      .updateMany({
-        where: { id: { in: ids } },
-        data: { active: false, deleted_by: user.id, delete_at: new Date() },
+    return this.jobType
+      .update(ids, {
+        active: false,
+        deleted_by: { id: user.id },
+        delete_at: new Date(),
       })
       .catch(() => {
         throw new BadRequestException('Jenis pekerjaan tidak ditemukan');

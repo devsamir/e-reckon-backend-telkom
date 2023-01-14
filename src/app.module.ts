@@ -7,6 +7,7 @@ import { AuthModule } from './Modules/Auth/auth.module';
 import { DatelModule } from './Modules/Datel/datel.module';
 import { IncidentModule } from './Modules/Incident/incident.module';
 import { ItemModule } from './Modules/Item/item.module';
+import { JobType } from './Modules/JobType/jobType.entity';
 import { JobTypeModule } from './Modules/JobType/jobType.module';
 import { Unit } from './Modules/Unit/unit.entity';
 import { UnitModule } from './Modules/Unit/unit.module';
@@ -27,7 +28,7 @@ import { PrismaModule } from './Prisma/prisma.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, Unit],
+      entities: [User, Unit, JobType],
       synchronize: true,
       logging: true,
     }),
