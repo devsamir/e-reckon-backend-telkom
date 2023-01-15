@@ -3,25 +3,28 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '@prisma/client';
+import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
-import { PrismaService } from '../../Prisma/prisma.service';
 
 import { CreateUpdateUnitDto } from './unit.dto';
+import { Unit } from './unit.entity';
 
 @Injectable()
 export class UnitService {
-  constructor(private prisma: PrismaService) {}
+  constructor(@InjectRepository(Unit) private unit: Repository<Unit>) {}
 
   async getAll(body: GetAllQuery) {
     const generatedQuery = generateQuery(body);
+
     const [length, data] = await Promise.all([
-      this.prisma.unit.count({
+      this.unit.count({
         where: { ...generatedQuery.where, active: true },
       }),
-      this.prisma.unit.findMany({
+      this.unit.find({
         ...generatedQuery,
         where: { ...generatedQuery.where, active: true },
       }),
@@ -33,60 +36,58 @@ export class UnitService {
   }
 
   async get(id: number) {
-    return this.prisma.unit.findFirst({
+    return this.unit.findOne({
       where: { id, active: true },
     });
   }
 
   async create(body: CreateUpdateUnitDto, user: User) {
     // Check if username is already in use
-    const unit = await this.prisma.unit.findFirst({
+    const unit = await this.unit.findOne({
       where: { unit_name: body.unit_name, active: true },
     });
     if (unit) throw new BadRequestException('Nama unit sudah dipakai');
 
-    return this.prisma.unit.create({
-      data: { unit_name: body.unit_name, created_by: user.id },
-      include: { createdBy: true },
+    const newUnit = this.unit.create({
+      unit_name: body.unit_name,
+      created_by: { id: user.id },
     });
+
+    return this.unit.save(newUnit);
   }
 
   async update(id: number, body: CreateUpdateUnitDto, user: User) {
     // Check if user exist
-    const oldUnit = await this.prisma.unit.findFirst({
+    const oldUnit = await this.unit.findOne({
       where: { id, active: true },
     });
     if (!oldUnit) throw new BadRequestException('Unit tidak ditemukan');
 
     // Check if unit name available
-    const isUnitAlreadyInUse = await this.prisma.unit.findFirst({
+    const isUnitAlreadyInUse = await this.unit.findOne({
       where: {
         unit_name: body.unit_name,
         active: true,
-        NOT: {
-          id,
-        },
+        id: Not(id),
       },
     });
 
     if (isUnitAlreadyInUse)
       throw new BadRequestException('Nama unit sudah dipakai');
 
-    return this.prisma.unit.update({
-      where: { id },
-      data: {
-        unit_name: body.unit_name,
-        updated_by: user.id,
-        update_at: new Date(),
-      },
+    return this.unit.update(id, {
+      unit_name: body.unit_name,
+      updated_by: { id: user.id },
+      update_at: new Date(),
     });
   }
 
   async delete(ids: number[], user: User) {
-    return this.prisma.unit
-      .updateMany({
-        where: { id: { in: ids } },
-        data: { active: false, deleted_by: user.id, delete_at: new Date() },
+    return this.unit
+      .update(ids, {
+        active: false,
+        deleted_by: { id: user.id },
+        delete_at: new Date(),
       })
       .catch(() => {
         throw new BadRequestException('Unit tidak ditemukan');

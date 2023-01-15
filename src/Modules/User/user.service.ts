@@ -3,25 +3,27 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import * as argon from 'argon2';
+import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
-import { PrismaService } from '../../Prisma/prisma.service';
 
 import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { Role, User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(@InjectRepository(User) private user: Repository<User>) {}
 
   async getAll(query: GetAllQuery) {
     const generatedQuery = generateQuery(query);
     const [length, data] = await Promise.all([
-      this.prisma.user.count({
+      this.user.count({
         where: { ...generatedQuery.where, active: true },
       }),
-      this.prisma.user.findMany({
+      this.user.find({
         ...generatedQuery,
         where: { ...generatedQuery.where, active: true },
       }),
@@ -32,13 +34,19 @@ export class UserService {
     return { length, data };
   }
 
-  get(id: number) {
-    return this.prisma.user.findFirst({ where: { id, active: true } });
+  async get(id: number) {
+    return this.user.findOne({ where: { id, active: true } });
+  }
+
+  async getByUsername(username: string) {
+    return this.user.findOne({
+      where: { username, active: true },
+    });
   }
 
   async create(body: CreateUserDto) {
     // Check if username is already in use
-    const user = await this.prisma.user.findFirst({
+    const user = await this.user.findOne({
       where: { username: body.username, active: true },
     });
     if (user) throw new BadRequestException('Username sudah dipakai');
@@ -48,25 +56,24 @@ export class UserService {
       throw new InternalServerErrorException('Gagal hashing password');
     });
 
-    return this.prisma.user.create({ data: { ...body, password: hash } });
+    const newUser = this.user.create({ ...body, password: hash });
+    return this.user.save(newUser);
   }
 
   async update(id: number, body: UpdateUserDto) {
     // Check if user exist
-    const oldUser = await this.prisma.user.findFirst({
+    const oldUser = await this.user.findOne({
       where: { id, active: true },
     });
     if (!oldUser) throw new BadRequestException('User tidak ditemukan');
 
     // Check if the username available
     if (body.username) {
-      const isUsernameAlreadyInUse = await this.prisma.user.findFirst({
+      const isUsernameAlreadyInUse = await this.user.findOne({
         where: {
           username: body.username,
           active: true,
-          NOT: {
-            id,
-          },
+          id: Not(id),
         },
       });
       if (isUsernameAlreadyInUse)
@@ -79,16 +86,13 @@ export class UserService {
         })
       : oldUser.password;
 
-    return this.prisma.user.update({
-      where: { id },
-      data: { ...body, password: hash },
-    });
+    return this.user.update(id, { ...body, password: hash });
   }
 
   async delete(ids: number[]) {
     // Check Super Admin
-    const users = await this.prisma.user.findMany({
-      where: { role: 'admin', active: true },
+    const users = await this.user.find({
+      where: { role: Role.ADMIN, active: true },
     });
 
     const superAdmin = users.filter((user) => ids.includes(user.id));
@@ -99,10 +103,6 @@ export class UserService {
 
     // Check If User Exist
 
-    return this.prisma.user
-      .updateMany({ where: { id: { in: ids } }, data: { active: false } })
-      .catch(() => {
-        throw new BadRequestException('User tidak ditemukan');
-      });
+    return this.user.update(ids, { active: false });
   }
 }

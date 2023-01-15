@@ -1,8 +1,8 @@
 interface GetAllQuery {
   limit?: number;
   offset?: number;
-  domain?: any;
+  domain?: any[];
   sort?: string;
-  fields?: string[];
+  fields?: any[];
   include?: string[];
 }

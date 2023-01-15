@@ -1,14 +1,6 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 
-enum Role {
-  admin = 'admin',
-  mitra = 'mitra',
-  commerce = 'commerce',
-  wh = 'wh',
-  telkom = 'telkom',
-  tl = 'tl',
-  first_tier = 'first_tier',
-}
+import { Role } from './user.entity';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Username tidak boleh kosong' })
