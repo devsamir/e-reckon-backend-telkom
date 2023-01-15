@@ -9,5 +9,6 @@ import { DatelService } from './datel.service';
   imports: [TypeOrmModule.forFeature([Datel])],
   controllers: [DatelController],
   providers: [DatelService],
+  exports: [DatelService],
 })
 export class DatelModule {}

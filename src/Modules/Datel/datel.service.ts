@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
-import { PrismaService } from '../../Prisma/prisma.service';
 
 import { Datel } from './datel.entity';
 
@@ -29,7 +28,7 @@ export class DatelService {
     return { length, data };
   }
 
-  get(id: number) {
+  async get(id: number) {
     return this.datel.findOne({ where: { id } });
   }
 }

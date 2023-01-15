@@ -9,7 +9,6 @@ import { User } from '@prisma/client';
 import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
-import { PrismaService } from '../../Prisma/prisma.service';
 import { UnitService } from '../Unit/unit.service';
 
 import { CreateItemDto, UpdateItemDto } from './item.dto';

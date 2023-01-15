@@ -43,6 +43,13 @@ export class IncidentController {
     return this.incidentService.getAll(body);
   }
 
+  @HttpCode(200)
+  @Post('/get_warehouse_order')
+  @Serialize(ExcludePasswordGetAllDto)
+  async getWarehouseOrder(@Body() body: GetAllQueryDto) {
+    return this.incidentService.getWarehouseOrder(body);
+  }
+
   @Roles('admin', 'tl')
   @Post('/create')
   createIncident(@Body() body: CreateIncidentDto, @GetUser() user: User) {

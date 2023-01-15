@@ -12,6 +12,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+import { ApproveWh } from './incidentDetail.entity';
+
 export class CreateIncidentDto {
   @MaxLength(100, { message: 'Tiket in tidak boleh lebih dari 100 karakter' })
   @IsNotEmpty({ message: 'Tiket in tidak boleh kosong' })
@@ -72,12 +74,6 @@ export class UpdateIncidentDto {
   @Type(() => UpdateIncidentDetails)
   @IsOptional()
   incident_details: UpdateIncidentDetails[];
-}
-
-enum ApproveWh {
-  not_yet = 'not_yet',
-  approved = 'approved',
-  decline = 'decline',
 }
 
 enum OrmCode {

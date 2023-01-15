@@ -1,12 +1,15 @@
 import { format } from 'date-fns';
+import { Like, Repository } from 'typeorm';
 
 import { PrismaService } from '../../Prisma/prisma.service';
 
-export const generateIncidentCode = async (prisma: PrismaService) => {
+import { Incident } from './incident.entity';
+
+export const generateIncidentCode = async (incident: Repository<Incident>) => {
   const prefix = `I-${format(new Date(), 'yyyyMMdd')}`;
-  const lastestIncident = await prisma.incidents.findFirst({
-    where: { incident_code: { contains: prefix } },
-    orderBy: { id: 'desc' },
+  const lastestIncident = await incident.findOne({
+    where: { incident_code: Like(`${prefix}%`) },
+    order: { id: 'DESC' },
   });
   if (lastestIncident) {
     const val = `0000${
