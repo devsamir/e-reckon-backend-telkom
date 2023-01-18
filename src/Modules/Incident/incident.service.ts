@@ -5,14 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { User } from '@prisma/client';
 import { DataSource, In, Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
 import { DatelService } from '../Datel/datel.service';
 import { ItemService } from '../Item/item.service';
 import { JobTypeService } from '../JobType/jobType.service';
-import { Role } from '../User/user.entity';
+import { Role, User } from '../User/user.entity';
 import { UserService } from '../User/user.service';
 
 import {

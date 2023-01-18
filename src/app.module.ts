@@ -17,7 +17,6 @@ import { Unit } from './Modules/Unit/unit.entity';
 import { UnitModule } from './Modules/Unit/unit.module';
 import { User } from './Modules/User/user.entity';
 import { UserModule } from './Modules/User/user.module';
-import { PrismaModule } from './Prisma/prisma.module';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { PrismaModule } from './Prisma/prisma.module';
       envFilePath: `.env`,
       isGlobal: true,
     }),
-    PrismaModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,

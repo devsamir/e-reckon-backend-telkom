@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { User } from '@prisma/client';
 import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
+import { User } from '../User/user.entity';
 
 import { CreateUpdateJobTypeDto } from './jobType.dto';
 import { JobType } from './jobType.entity';

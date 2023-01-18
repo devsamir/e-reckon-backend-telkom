@@ -10,8 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { User } from '@prisma/client';
-
 import { GetUser } from '../../Common/decorators/GetUser';
 import { Roles } from '../../Common/decorators/Roles';
 import { DeleteDataDto } from '../../Common/dtos/deleteDataDto';
@@ -22,6 +20,7 @@ import {
 import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
+import { User } from '../User/user.entity';
 
 import { CreateUpdateJobTypeDto } from './jobType.dto';
 import { JobTypeService } from './jobType.service';

@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { User } from '@prisma/client';
 import { Roles } from 'src/Common/decorators/Roles';
 
 import { GetUser } from '../../Common/decorators/GetUser';
@@ -22,6 +21,7 @@ import {
 import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
+import { User } from '../User/user.entity';
 
 import {
   ConfirmFirstTier,
