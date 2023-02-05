@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { User } from '@prisma/client';
 import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
 import { UnitService } from '../Unit/unit.service';
+import { User } from '../User/user.entity';
 
 import { CreateItemDto, UpdateItemDto } from './item.dto';
 import { Item } from './item.entity';

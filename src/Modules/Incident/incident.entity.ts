@@ -27,6 +27,7 @@ export enum StatusTier1 {
   closed = 'Closed',
   mitra_done = 'Mitra Done',
   return_to_mitra = 'Return to Mitra',
+  mitra_revision = 'Mitra Done (Revision)',
 }
 
 export enum StatusTier2 {

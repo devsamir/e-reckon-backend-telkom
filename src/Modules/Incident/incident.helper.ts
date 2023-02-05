@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import { Like, Repository } from 'typeorm';
 
-import { PrismaService } from '../../Prisma/prisma.service';
 
 import { Incident } from './incident.entity';
 

@@ -6,8 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { User } from '../User/user.entity';
-
 @Entity({ name: 'witel' })
 export class Witel {
   @PrimaryGeneratedColumn('increment')

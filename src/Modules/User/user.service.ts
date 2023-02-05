@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as argon from 'argon2';
+import * as bcrypt from 'bcryptjs';
 import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
@@ -52,7 +52,7 @@ export class UserService {
     if (user) throw new BadRequestException('Username sudah dipakai');
 
     // Hash password using argon and than save it
-    const hash = await argon.hash(body.password).catch(() => {
+    const hash = await bcrypt.hash(body.password, 10).catch(() => {
       throw new InternalServerErrorException('Gagal hashing password');
     });
 
@@ -81,7 +81,7 @@ export class UserService {
     }
 
     const hash = body.password
-      ? await argon.hash(body.password).catch(() => {
+      ? await bcrypt.hash(body.password, 10).catch(() => {
           throw new InternalServerErrorException('Gagal hashing password');
         })
       : oldUser.password;
