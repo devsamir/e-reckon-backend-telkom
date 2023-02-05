@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { format } from 'date-fns';
 import { DataSource, In, Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
@@ -169,7 +170,6 @@ export class IncidentService {
         datel_id: { id: body.datel_id },
         assigned_mitra: { id: body?.assigned_mitra },
         updated_by: { id: user.id },
-        update_at: new Date(),
       });
 
       if (!body?.incident_details?.length) return incident;
@@ -231,9 +231,7 @@ export class IncidentService {
     return this.incident.update(body.id, {
       on_tier: OnTier.tier_2,
       status_tier_2: StatusTier2.open,
-      status_tier_1: StatusTier1.closed,
       updated_by: { id: user.id },
-      update_at: new Date(),
     });
   }
   async finishIncidentMitra(body: ConfirmFirstTier, user: User) {
@@ -244,10 +242,12 @@ export class IncidentService {
 
     return this.incident.update(body.id, {
       on_tier: OnTier.tier_1,
-      status_tier_1: StatusTier1.mitra_done,
+      status_tier_1:
+        incident.status_tier_2 === StatusTier2.return_by_tier_1
+          ? StatusTier1.mitra_revision
+          : StatusTier1.mitra_done,
       status_tier_2: StatusTier2.mitra_done,
       updated_by: { id: user.id },
-      update_at: new Date(),
     });
   }
   async returnToMitra(body: ConfirmFirstTier, user: User) {
@@ -261,7 +261,6 @@ export class IncidentService {
       status_tier_2: StatusTier2.return_by_tier_1,
       status_tier_1: StatusTier1.return_to_mitra,
       updated_by: { id: user.id },
-      update_at: new Date(),
     });
   }
 
@@ -276,8 +275,7 @@ export class IncidentService {
       status_tier_2: StatusTier2.closed_pekerjaan,
       status_tier_1: StatusTier1.closed,
       updated_by: { id: user.id },
-      update_at: new Date(),
-      close_at: new Date(),
+      close_at: format(new Date(), 'yyyy-MM-dd'),
     });
   }
 }

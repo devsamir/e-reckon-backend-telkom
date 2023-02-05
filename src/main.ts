@@ -10,7 +10,7 @@ async function bootstrap() {
   // Global Middleware
   app.use(helmet());
   app.enableCors({ credentials: true, origin: process.env.CLIENT_URL });
-
+  app.setGlobalPrefix('api');
   // CUSTOM ERROR EXCEPTION
   app.useGlobalFilters(new HttpExceptionFilter());
 

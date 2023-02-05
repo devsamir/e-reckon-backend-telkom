@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import * as argon from 'argon2';
+import * as bcrypt from 'bcryptjs';
 
 import { UserService } from '../User/user.service';
 
@@ -22,8 +22,8 @@ export class AuthService {
   async login(body: LoginDto) {
     const user = await this.userService.getByUsername(body.username);
     if (!user) throw new BadRequestException('Username atau password salah');
-    const checkPassword = await argon
-      .verify(user.password, body.password)
+    const checkPassword = await bcrypt
+      .compare(body.password, user.password)
       .catch(() => {
         throw new InternalServerErrorException('Gagal compare password');
       });
