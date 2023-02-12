@@ -26,6 +26,7 @@ import { User } from '../User/user.entity';
 import {
   ConfirmFirstTier,
   CreateIncidentDto,
+  UpdateCommerceCode,
   UpdateIncidentDto,
 } from './incident.dto';
 import { IncidentService } from './incident.service';
@@ -94,5 +95,10 @@ export class IncidentController {
   @Post('/close-incident')
   closeIncident(@Body() body: ConfirmFirstTier, @GetUser() user: User) {
     return this.incidentService.closeIncident(body, user);
+  }
+
+  @Post('/update-commerce-code')
+  updateCommerceCode(@Body() body: UpdateCommerceCode, @GetUser() user: User) {
+    return this.incidentService.updateCommerceCode(body, user);
   }
 }

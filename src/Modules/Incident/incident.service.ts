@@ -18,6 +18,7 @@ import { UserService } from '../User/user.service';
 import {
   ConfirmFirstTier,
   CreateIncidentDto,
+  UpdateCommerceCode,
   UpdateIncidentDto,
 } from './incident.dto';
 import { Incident, OnTier, StatusTier1, StatusTier2 } from './incident.entity';
@@ -276,6 +277,20 @@ export class IncidentService {
       status_tier_1: StatusTier1.closed,
       updated_by: { id: user.id },
       close_at: format(new Date(), 'yyyy-MM-dd'),
+    });
+  }
+
+  async updateCommerceCode(body: UpdateCommerceCode, user: User) {
+    // check if commerce code is unique
+    const incident = await this.incident.findOne({
+      where: { commerce_code: body.commerce_code, id: Not(body.id) },
+    });
+
+    if (incident) throw new BadRequestException('Commerce code harus unik');
+
+    return this.incident.update(body.id, {
+      commerce_code: body.commerce_code,
+      updated_by: { id: user.id },
     });
   }
 }

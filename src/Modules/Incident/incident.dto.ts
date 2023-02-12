@@ -118,3 +118,12 @@ export class ConfirmFirstTier {
   @IsNotEmpty({ message: 'Id harus diisi' })
   id: number;
 }
+
+export class UpdateCommerceCode {
+  @IsNumber({}, { message: 'id harus number' })
+  @IsNotEmpty({ message: 'id tidak boleh kosong' })
+  id: number;
+
+  @IsNotEmpty({ message: 'Commerce code tidak boleh kosong' })
+  commerce_code: string;
+}
