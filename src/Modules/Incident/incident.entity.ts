@@ -103,6 +103,9 @@ export class Incident {
   @Column({ nullable: true, type: 'date' })
   close_at: Date;
 
+  @Column({ nullable: true })
+  commerce_code: string;
+
   @CreateDateColumn()
   created_at: Date;
 
