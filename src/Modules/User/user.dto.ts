@@ -15,6 +15,9 @@ export class CreateUserDto {
   @IsEnum(Role, { message: 'Role user tidak sesuai' })
   @IsNotEmpty({ message: 'Role user tidak boleh kosong' })
   role: Role;
+
+  @IsOptional()
+  avatar?: string;
 }
 
 export class UpdateUserDto {
@@ -32,5 +35,19 @@ export class UpdateUserDto {
   @IsEnum(Role, { message: 'Role user tidak sesuai' })
   @IsNotEmpty({ message: 'Role user tidak boleh kosong' })
   @IsOptional()
-  role: Role;
+  role?: Role;
+
+  @IsOptional()
+  avatar?: string;
+}
+
+export class UpdateProfileDto {
+  @IsOptional()
+  fullname?: string;
+
+  @IsOptional()
+  password_old?: string;
+
+  @IsOptional()
+  password_new?: string;
 }

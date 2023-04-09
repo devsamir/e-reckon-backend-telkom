@@ -10,7 +10,7 @@ import { Not, Repository } from 'typeorm';
 
 import { generateQuery } from '../../Common/helpers';
 
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { CreateUserDto, UpdateProfileDto, UpdateUserDto } from './user.dto';
 import { Role, User } from './user.entity';
 
 @Injectable()
@@ -89,6 +89,30 @@ export class UserService {
     return this.user.update(id, { ...body, password: hash });
   }
 
+  async updateProfile(id: number, body: UpdateProfileDto) {
+    // Check if user exist
+    const oldUser = await this.user.findOne({
+      where: { id, active: true },
+    });
+    if (!oldUser) throw new BadRequestException('User tidak ditemukan');
+
+    if (body.password_old || body.password_new) {
+      const isOldPasswordCorrect = await bcrypt.compare(
+        body.password_old,
+        oldUser.password,
+      );
+      if (!isOldPasswordCorrect)
+        throw new BadRequestException('Password Lama Salah');
+    }
+
+    const hash = body.password_new
+      ? await bcrypt.hash(body.password_new, 10).catch(() => {
+          throw new InternalServerErrorException('Gagal hashing password');
+        })
+      : oldUser.password;
+
+    return this.user.update(id, { fullname: body.fullname, password: hash });
+  }
   async delete(ids: number[]) {
     // Check Super Admin
     const users = await this.user.find({

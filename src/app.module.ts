@@ -1,6 +1,10 @@
+import { join } from 'path';
+
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
+import { MulterModule } from '@nestjs/platform-express/multer';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from './Modules/Auth/auth.module';
@@ -15,6 +19,7 @@ import { JobType } from './Modules/JobType/jobType.entity';
 import { JobTypeModule } from './Modules/JobType/jobType.module';
 import { Unit } from './Modules/Unit/unit.entity';
 import { UnitModule } from './Modules/Unit/unit.module';
+import { UploadModule } from './Modules/Upload/upload.module';
 import { User } from './Modules/User/user.entity';
 import { UserModule } from './Modules/User/user.module';
 
@@ -43,6 +48,13 @@ import { UserModule } from './Modules/User/user.module';
       synchronize: true,
       logging: true,
     }),
+    MulterModule.register({
+      dest: '../public',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/api/upload',
+    }),
     UserModule,
     DatelModule,
     AuthModule,
@@ -50,6 +62,7 @@ import { UserModule } from './Modules/User/user.module';
     ItemModule,
     JobTypeModule,
     IncidentModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [

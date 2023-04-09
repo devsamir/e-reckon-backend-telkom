@@ -24,7 +24,7 @@ import { GetAllQueryDto } from '../../Common/dtos/getAllDto';
 import { AdminGuard } from '../../Guards/admin.guard';
 import { Serialize } from '../../Interceptors/serialize.interceptor';
 
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { CreateUserDto, UpdateProfileDto, UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -53,6 +53,16 @@ export class UserController {
   @Get('/me')
   async getMyProfile(@Req() req: Request) {
     const user = await this.userService.get(req.user.id);
+
+    return user;
+  }
+
+  @Post('/update-me/:id')
+  async updateProfile(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateProfileDto,
+  ) {
+    const user = await this.userService.updateProfile(id, body);
 
     return user;
   }
