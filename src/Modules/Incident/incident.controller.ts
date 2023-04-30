@@ -47,7 +47,9 @@ export class IncidentController {
   @HttpCode(200)
   @Post('/get_warehouse_order')
   @Serialize(ExcludePasswordGetAllDto)
-  async getWarehouseOrder(@Body() body: GetAllQueryDto) {
+  async getWarehouseOrder(
+    @Body() body: GetAllQueryDto & { show_all: boolean },
+  ) {
     return this.incidentService.getWarehouseOrder(body);
   }
 

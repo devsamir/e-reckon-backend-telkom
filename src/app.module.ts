@@ -17,6 +17,7 @@ import { Item } from './Modules/Item/item.entity';
 import { ItemModule } from './Modules/Item/item.module';
 import { JobType } from './Modules/JobType/jobType.entity';
 import { JobTypeModule } from './Modules/JobType/jobType.module';
+import { ReportModule } from './Modules/Report/report.module';
 import { Unit } from './Modules/Unit/unit.entity';
 import { UnitModule } from './Modules/Unit/unit.module';
 import { UploadModule } from './Modules/Upload/upload.module';
@@ -63,6 +64,7 @@ import { UserModule } from './Modules/User/user.module';
     JobTypeModule,
     IncidentModule,
     UploadModule,
+    ReportModule,
   ],
   controllers: [],
   providers: [

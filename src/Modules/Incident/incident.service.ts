@@ -36,6 +36,8 @@ export class IncidentService {
     private dataSource: DataSource,
   ) {}
 
+  incidentRepository = this.incident;
+
   async getAll(body: GetAllQuery) {
     const generatedQuery = generateQuery(body);
 
@@ -54,30 +56,39 @@ export class IncidentService {
     return { length, data };
   }
 
-  async getWarehouseOrder(body: GetAllQuery) {
-    const generatedQuery = generateQuery(body);
+  async getWarehouseOrder(body: GetAllQuery & { show_all: boolean }) {
+    const { show_all, ...rest } = body;
+    const generatedQuery = generateQuery(rest);
 
     const [length, data] = await Promise.all([
       this.incident.count({
-        where: [
-          { on_tier: OnTier.tier_2, ...generatedQuery.where },
-          {
-            on_tier: OnTier.tier_1,
-            status_tier_1: Not(StatusTier1.open),
-            ...generatedQuery.where,
-          },
-        ],
+        where: generatedQuery.where,
+        // where: show_all
+        //   ? {
+        //       ...generatedQuery.where,
+        //     }
+        //   : [
+        //       { on_tier: OnTier.tier_2, ...generatedQuery.where },
+        //       {
+        //         on_tier: OnTier.tier_1,
+        //         status_tier_1: Not(StatusTier1.open),
+        //         ...generatedQuery.where,
+        //       },
+        //     ],
       }),
       this.incident.find({
         ...generatedQuery,
-        where: [
-          { on_tier: OnTier.tier_2, ...generatedQuery.where },
-          {
-            on_tier: OnTier.tier_1,
-            status_tier_1: Not(StatusTier1.open),
-            ...generatedQuery.where,
-          },
-        ],
+        where: generatedQuery.where,
+        // where: show_all
+        //   ? { ...generatedQuery.where }
+        //   : [
+        //       { on_tier: OnTier.tier_2, ...generatedQuery.where },
+        //       {
+        //         on_tier: OnTier.tier_1,
+        //         status_tier_1: Not(StatusTier1.open),
+        //         ...generatedQuery.where,
+        //       },
+        //     ],
       }),
     ]).catch(() => {
       throw new InternalServerErrorException('Query pencarian salah');

@@ -21,5 +21,6 @@ import { IncidentDetail } from './incidentDetail.entity';
   ],
   controllers: [IncidentController],
   providers: [IncidentService],
+  exports: [IncidentService],
 })
 export class IncidentModule {}
